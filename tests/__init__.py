@@ -1,1 +1,1 @@
-# Test package for Non-Fiction Book-Writing System
+# Tests package for the modular book-writing system

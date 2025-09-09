@@ -1,186 +1,212 @@
 """
-Tests for memory manager module.
+Unit tests for the MemoryManager module.
 """
-
-import asyncio
 import pytest
-import tempfile
+import asyncio
 from pathlib import Path
-from memory_manager import MemoryManager, MemoryEntry, RetrievalResult
+from memory_manager import MemoryManager, MemoryChunk, MemoryTag
 
 
 class TestMemoryManager:
-    """Test cases for MemoryManager."""
+    """Test cases for MemoryManager functionality."""
     
-    @pytest.fixture
-    def temp_dir(self):
-        """Create a temporary directory for testing."""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            yield temp_dir
+    @pytest.mark.asyncio
+    async def test_initialize(self, memory_manager):
+        """Test memory manager initialization."""
+        assert memory_manager is not None
+        assert memory_manager.vector_store is not None
     
-    @pytest.fixture
-    def memory_manager(self, temp_dir):
-        """Create a memory manager instance."""
-        return MemoryManager(
-            persist_directory=temp_dir,
-            use_remote_embeddings=False
+    @pytest.mark.asyncio
+    async def test_store_chunk(self, memory_manager):
+        """Test storing a memory chunk."""
+        chunk = MemoryChunk(
+            content="Test content for memory storage",
+            metadata={"source": "test", "type": "document"},
+            chunk_id="test_chunk_001"
         )
+        
+        result = await memory_manager.store_chunk(chunk)
+        assert result is True
+        
+        # Verify chunk was stored
+        retrieved = await memory_manager.get_chunk("test_chunk_001")
+        assert retrieved is not None
+        assert retrieved.content == chunk.content
     
-    @pytest.fixture
-    def sample_metadata(self):
-        """Create sample document metadata."""
-        from document_ingestor import DocumentMetadata
-        return DocumentMetadata(
-            source_id="test_source_123",
-            original_filename="test.txt",
-            file_type=".txt",
-            file_size=1000,
-            ingestion_timestamp="2024-01-01T00:00:00",
-            chunk_count=3,
-            checksum="test_checksum"
-        )
-    
-    @pytest.fixture
-    def sample_chunks(self):
-        """Create sample document chunks."""
-        from document_ingestor import DocumentChunk
-        return [
-            DocumentChunk(
-                chunk_id="test_source_123_chunk_0",
-                source_id="test_source_123",
-                chunk_index=0,
-                content="This is the first chunk of content.",
-                metadata={"word_count": "7"},
-                word_count=7,
-                char_count=35
+    @pytest.mark.asyncio
+    async def test_retrieve_chunks(self, memory_manager):
+        """Test retrieving chunks by query."""
+        # Store multiple chunks
+        chunks = [
+            MemoryChunk(
+                content="Machine learning algorithms",
+                metadata={"topic": "AI", "type": "concept"},
+                chunk_id="chunk_001"
             ),
-            DocumentChunk(
-                chunk_id="test_source_123_chunk_1",
-                source_id="test_source_123",
-                chunk_index=1,
-                content="This is the second chunk of content.",
-                metadata={"word_count": "7"},
-                word_count=7,
-                char_count=36
+            MemoryChunk(
+                content="Deep learning neural networks",
+                metadata={"topic": "AI", "type": "concept"},
+                chunk_id="chunk_002"
+            ),
+            MemoryChunk(
+                content="Data preprocessing techniques",
+                metadata={"topic": "Data Science", "type": "method"},
+                chunk_id="chunk_003"
             )
         ]
-    
-    @pytest.mark.asyncio
-    async def test_store_document_chunks(self, memory_manager, sample_metadata, sample_chunks):
-        """Test storing document chunks."""
-        chunk_ids = await memory_manager.store_document_chunks(
-            sample_metadata, sample_chunks, "test_agent"
-        )
         
-        assert len(chunk_ids) == len(sample_chunks)
-        assert all(isinstance(chunk_id, str) for chunk_id in chunk_ids)
-    
-    @pytest.mark.asyncio
-    async def test_retrieve_relevant_chunks(self, memory_manager, sample_metadata, sample_chunks):
-        """Test retrieving relevant chunks."""
-        # Store chunks first
-        await memory_manager.store_document_chunks(
-            sample_metadata, sample_chunks, "test_agent"
-        )
+        for chunk in chunks:
+            await memory_manager.store_chunk(chunk)
         
-        # Retrieve chunks
-        results = await memory_manager.retrieve_relevant_chunks(
-            query="first chunk content",
-            top_k=5
-        )
-        
+        # Test semantic search
+        results = await memory_manager.search_chunks("artificial intelligence", limit=2)
         assert len(results) > 0
-        assert all(isinstance(result, RetrievalResult) for result in results)
-        assert all(result.score >= 0.0 for result in results)
+        assert any("machine learning" in result.content.lower() for result in results)
+        
+        # Test metadata filtering
+        ai_results = await memory_manager.search_chunks(
+            "learning", 
+            metadata_filter={"topic": "AI"},
+            limit=10
+        )
+        assert len(ai_results) == 2
     
     @pytest.mark.asyncio
-    async def test_get_context_for_generation(self, memory_manager, sample_metadata, sample_chunks):
-        """Test getting context for generation."""
-        # Store chunks first
-        await memory_manager.store_document_chunks(
-            sample_metadata, sample_chunks, "test_agent"
-        )
+    async def test_tag_management(self, memory_manager):
+        """Test memory tag management."""
+        # Create tags
+        tag1 = MemoryTag(name="AI", description="Artificial Intelligence")
+        tag2 = MemoryTag(name="ML", description="Machine Learning")
         
-        # Get context
-        context, results = await memory_manager.get_context_for_generation(
-            query="test content",
-            max_tokens=1000
-        )
+        await memory_manager.create_tag(tag1)
+        await memory_manager.create_tag(tag2)
         
-        assert isinstance(context, str)
-        assert len(context) > 0
-        assert len(results) > 0
+        # Test tag retrieval
+        tags = await memory_manager.get_tags()
+        assert len(tags) >= 2
+        assert any(tag.name == "AI" for tag in tags)
+        
+        # Test tag search
+        ai_tag = await memory_manager.get_tag("AI")
+        assert ai_tag is not None
+        assert ai_tag.name == "AI"
     
     @pytest.mark.asyncio
-    async def test_add_agent_notes(self, memory_manager):
-        """Test adding agent notes."""
-        content = "This is a test agent note."
-        agent_id = "test_agent"
-        tags = ["test", "note"]
-        
-        note_id = await memory_manager.add_agent_notes(
-            content=content,
-            agent_id=agent_id,
-            tags=tags,
-            provenance_notes="Test note"
+    async def test_provenance_tracking(self, memory_manager):
+        """Test provenance tracking for memory chunks."""
+        chunk = MemoryChunk(
+            content="Test content with provenance",
+            metadata={
+                "source": "test_document.pdf",
+                "page": 1,
+                "author": "Test Author",
+                "created_at": "2024-01-01T00:00:00Z"
+            },
+            chunk_id="provenance_test_001"
         )
         
-        assert isinstance(note_id, str)
-        assert len(note_id) > 0
+        await memory_manager.store_chunk(chunk)
+        
+        # Test provenance retrieval
+        retrieved = await memory_manager.get_chunk("provenance_test_001")
+        assert retrieved.metadata["source"] == "test_document.pdf"
+        assert retrieved.metadata["page"] == 1
+        assert retrieved.metadata["author"] == "Test Author"
     
     @pytest.mark.asyncio
-    async def test_search_by_tags(self, memory_manager):
-        """Test searching by tags."""
-        # Add some notes with tags
-        await memory_manager.add_agent_notes(
-            content="Test content 1",
-            agent_id="test_agent",
-            tags=["test", "content"]
-        )
+    async def test_memory_cleanup(self, memory_manager):
+        """Test memory cleanup operations."""
+        # Store test chunks
+        for i in range(5):
+            chunk = MemoryChunk(
+                content=f"Test content {i}",
+                metadata={"test": True, "index": i},
+                chunk_id=f"cleanup_test_{i}"
+            )
+            await memory_manager.store_chunk(chunk)
         
-        await memory_manager.add_agent_notes(
-            content="Test content 2",
-            agent_id="test_agent",
-            tags=["test", "example"]
-        )
+        # Test cleanup by metadata
+        cleaned = await memory_manager.cleanup_chunks(metadata_filter={"test": True})
+        assert cleaned > 0
         
-        # Search by tags
-        results = await memory_manager.search_by_tags(["test"], top_k=10)
-        
-        assert len(results) >= 2
-        assert all(isinstance(result, RetrievalResult) for result in results)
-    
-    def test_get_stats(self, memory_manager):
-        """Test getting memory statistics."""
-        stats = memory_manager.get_stats()
-        
-        assert isinstance(stats, dict)
-        assert "total_chunks" in stats
-        assert "collection_name" in stats
-        assert stats["total_chunks"] >= 0
+        # Verify chunks are removed
+        for i in range(5):
+            retrieved = await memory_manager.get_chunk(f"cleanup_test_{i}")
+            assert retrieved is None
     
     @pytest.mark.asyncio
-    async def test_generate_local_embedding(self, memory_manager):
-        """Test generating local embeddings."""
-        text = "This is a test text for embedding generation."
+    async def test_memory_statistics(self, memory_manager):
+        """Test memory statistics collection."""
+        # Store some chunks
+        for i in range(3):
+            chunk = MemoryChunk(
+                content=f"Statistics test content {i}",
+                metadata={"test": True},
+                chunk_id=f"stats_test_{i}"
+            )
+            await memory_manager.store_chunk(chunk)
         
-        embedding = await memory_manager._generate_local_embedding(text)
-        
-        assert isinstance(embedding, list)
-        assert len(embedding) > 0
-        assert all(isinstance(dim, float) for dim in embedding)
+        # Get statistics
+        stats = await memory_manager.get_memory_statistics()
+        assert stats["total_chunks"] >= 3
+        assert stats["total_size"] > 0
+        assert "average_chunk_size" in stats
     
     @pytest.mark.asyncio
-    async def test_clear_memory(self, memory_manager, sample_metadata, sample_chunks):
-        """Test clearing memory."""
-        # Store some data first
-        await memory_manager.store_document_chunks(
-            sample_metadata, sample_chunks, "test_agent"
+    async def test_concurrent_operations(self, memory_manager):
+        """Test concurrent memory operations."""
+        async def store_chunk(index):
+            chunk = MemoryChunk(
+                content=f"Concurrent test content {index}",
+                metadata={"concurrent": True, "index": index},
+                chunk_id=f"concurrent_test_{index}"
+            )
+            return await memory_manager.store_chunk(chunk)
+        
+        # Run concurrent operations
+        tasks = [store_chunk(i) for i in range(10)]
+        results = await asyncio.gather(*tasks)
+        
+        assert all(results)
+        
+        # Verify all chunks were stored
+        for i in range(10):
+            retrieved = await memory_manager.get_chunk(f"concurrent_test_{i}")
+            assert retrieved is not None
+    
+    @pytest.mark.asyncio
+    async def test_error_handling(self, memory_manager):
+        """Test error handling in memory operations."""
+        # Test storing chunk with invalid data
+        with pytest.raises(ValueError):
+            await memory_manager.store_chunk(None)
+        
+        # Test retrieving non-existent chunk
+        result = await memory_manager.get_chunk("nonexistent_chunk")
+        assert result is None
+    
+    @pytest.mark.asyncio
+    async def test_performance_metrics(self, memory_manager, performance_metrics):
+        """Test performance metrics collection."""
+        import time
+        
+        # Test storage performance
+        start_time = time.time()
+        chunk = MemoryChunk(
+            content="Performance test content",
+            metadata={"test": True},
+            chunk_id="perf_test_001"
         )
+        await memory_manager.store_chunk(chunk)
+        storage_time = time.time() - start_time
         
-        # Clear memory
-        await memory_manager.clear_memory()
+        # Test retrieval performance
+        start_time = time.time()
+        await memory_manager.get_chunk("perf_test_001")
+        retrieval_time = time.time() - start_time
         
-        # Check that memory is cleared
-        stats = memory_manager.get_stats()
-        assert stats["total_chunks"] == 0
+        performance_metrics["memory_storage_time"] = storage_time
+        performance_metrics["memory_retrieval_time"] = retrieval_time
+        
+        assert storage_time > 0
+        assert retrieval_time > 0

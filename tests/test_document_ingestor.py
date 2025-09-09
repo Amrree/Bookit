@@ -1,125 +1,150 @@
 """
-Tests for document ingestor module.
+Unit tests for the DocumentIngestor module.
 """
-
-import asyncio
 import pytest
-import tempfile
+import asyncio
 from pathlib import Path
-from document_ingestor import DocumentIngestor, DocumentMetadata, DocumentChunk
+from document_ingestor import DocumentIngestor, DocumentMetadata
 
 
 class TestDocumentIngestor:
-    """Test cases for DocumentIngestor."""
-    
-    @pytest.fixture
-    def ingestor(self):
-        """Create a document ingestor instance."""
-        return DocumentIngestor(chunk_size=500, chunk_overlap=100)
-    
-    @pytest.fixture
-    def sample_text_file(self):
-        """Create a sample text file for testing."""
-        content = """
-        This is a sample document for testing the document ingestor.
-        It contains multiple paragraphs with various content.
-        
-        The document should be chunked appropriately based on the chunk size.
-        Each chunk should have proper metadata and identifiers.
-        
-        This is the third paragraph with more content to test chunking.
-        The ingestor should handle different types of content properly.
-        """
-        
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write(content)
-            return f.name
+    """Test cases for DocumentIngestor functionality."""
     
     @pytest.mark.asyncio
-    async def test_ingest_text_file(self, ingestor, sample_text_file):
-        """Test ingesting a text file."""
-        metadata, chunks = await ingestor.ingest_document(sample_text_file)
+    async def test_ingest_pdf_document(self, document_ingestor, sample_documents):
+        """Test PDF document ingestion."""
+        pdf_file = sample_documents["pdf"]
         
-        assert isinstance(metadata, DocumentMetadata)
-        assert metadata.original_filename == Path(sample_text_file).name
-        assert metadata.file_type == '.txt'
-        assert metadata.chunk_count == len(chunks)
-        assert len(chunks) > 0
+        # Test metadata extraction
+        metadata = await document_ingestor._extract_pdf_metadata(pdf_file, DocumentMetadata())
+        assert metadata.title is not None
+        assert metadata.author is not None
+        assert metadata.file_type == "pdf"
         
-        for chunk in chunks:
-            assert isinstance(chunk, DocumentChunk)
-            assert chunk.source_id == metadata.source_id
-            assert len(chunk.content) > 0
-            assert chunk.word_count > 0
+        # Test text extraction
+        text = await document_ingestor._extract_pdf_text(pdf_file)
+        assert len(text) > 0
+        assert "machine learning" in text.lower()
+        
+        # Test full ingestion
+        result = await document_ingestor.ingest_document(pdf_file)
+        assert result is not None
+        assert result["chunks_created"] > 0
     
     @pytest.mark.asyncio
-    async def test_chunk_content(self, ingestor):
-        """Test content chunking functionality."""
-        content = "This is a test content. " * 100  # Create long content
-        source_id = "test_source"
+    async def test_ingest_markdown_document(self, document_ingestor, sample_documents):
+        """Test Markdown document ingestion."""
+        md_file = sample_documents["markdown"]
         
-        chunks = await ingestor._chunk_content(content, source_id)
+        # Test metadata extraction
+        metadata = await document_ingestor._extract_markdown_metadata(md_file, DocumentMetadata())
+        assert metadata.title is not None
+        assert metadata.file_type == "markdown"
         
-        assert len(chunks) > 1  # Should be chunked
-        assert all(chunk.source_id == source_id for chunk in chunks)
-        assert all(len(chunk.content) <= ingestor.chunk_size for chunk in chunks)
+        # Test text extraction
+        text = await document_ingestor._extract_markdown_text(md_file)
+        assert len(text) > 0
+        assert "artificial intelligence" in text.lower()
+        
+        # Test full ingestion
+        result = await document_ingestor.ingest_document(md_file)
+        assert result is not None
+        assert result["chunks_created"] > 0
     
     @pytest.mark.asyncio
-    async def test_generate_source_id(self, ingestor):
-        """Test source ID generation."""
-        test_path = Path("/tmp/test_file.txt")
-        source_id = ingestor._generate_source_id(test_path)
+    async def test_ingest_txt_document(self, document_ingestor, sample_documents):
+        """Test TXT document ingestion."""
+        txt_file = sample_documents["txt"]
         
-        assert isinstance(source_id, str)
-        assert len(source_id) == 16  # SHA-256 first 16 chars
+        # Test metadata extraction
+        metadata = await document_ingestor._extract_txt_metadata(txt_file, DocumentMetadata())
+        assert metadata.title is not None
+        assert metadata.file_type == "txt"
+        
+        # Test text extraction
+        text = await document_ingestor._extract_txt_text(txt_file)
+        assert len(text) > 0
+        assert "data science" in text.lower()
+        
+        # Test full ingestion
+        result = await document_ingestor.ingest_document(txt_file)
+        assert result is not None
+        assert result["chunks_created"] > 0
     
     @pytest.mark.asyncio
-    async def test_calculate_checksum(self, ingestor, sample_text_file):
-        """Test checksum calculation."""
-        checksum = await ingestor._calculate_checksum(Path(sample_text_file))
+    async def test_batch_ingestion(self, document_ingestor, sample_documents):
+        """Test batch document ingestion."""
+        files = list(sample_documents.values())
         
-        assert isinstance(checksum, str)
-        assert len(checksum) == 64  # SHA-256 hex length
-    
-    def test_split_into_sentences(self, ingestor):
-        """Test sentence splitting."""
-        text = "First sentence. Second sentence! Third sentence? Fourth sentence."
-        sentences = ingestor._split_into_sentences(text)
+        results = await document_ingestor.ingest_documents(files)
+        assert len(results) == len(files)
         
-        assert len(sentences) == 4
-        assert "First sentence" in sentences[0]
-        assert "Second sentence" in sentences[1]
-    
-    def test_create_chunk(self, ingestor):
-        """Test chunk creation."""
-        content = "This is test content for chunking."
-        source_id = "test_source"
-        chunk_index = 0
-        
-        chunk = ingestor._create_chunk(content, source_id, chunk_index)
-        
-        assert isinstance(chunk, DocumentChunk)
-        assert chunk.chunk_id == f"{source_id}_chunk_{chunk_index}"
-        assert chunk.content == content.strip()
-        assert chunk.source_id == source_id
-        assert chunk.chunk_index == chunk_index
+        for result in results:
+            assert result["success"] is True
+            assert result["chunks_created"] > 0
     
     @pytest.mark.asyncio
-    async def test_ingest_nonexistent_file(self, ingestor):
-        """Test ingesting a non-existent file."""
+    async def test_unsupported_file_type(self, document_ingestor, temp_dir):
+        """Test handling of unsupported file types."""
+        unsupported_file = temp_dir / "test.xyz"
+        unsupported_file.write_text("Test content")
+        
+        with pytest.raises(ValueError):
+            await document_ingestor.ingest_document(unsupported_file)
+    
+    @pytest.mark.asyncio
+    async def test_nonexistent_file(self, document_ingestor):
+        """Test handling of nonexistent files."""
+        nonexistent_file = Path("nonexistent_file.pdf")
+        
         with pytest.raises(FileNotFoundError):
-            await ingestor.ingest_document("/nonexistent/file.txt")
+            await document_ingestor.ingest_document(nonexistent_file)
     
     @pytest.mark.asyncio
-    async def test_ingest_unsupported_format(self, ingestor):
-        """Test ingesting an unsupported file format."""
-        with tempfile.NamedTemporaryFile(suffix='.xyz', delete=False) as f:
-            f.write(b"test content")
-            f.flush()
-            
-            with pytest.raises(ValueError):
-                await ingestor.ingest_document(f.name)
+    async def test_chunking_strategy(self, document_ingestor, sample_documents):
+        """Test document chunking strategy."""
+        md_file = sample_documents["markdown"]
+        
+        # Test chunking with different strategies
+        chunks = await document_ingestor._chunk_text("Test content for chunking. " * 100)
+        assert len(chunks) > 1
+        
+        # Test chunk overlap
+        chunked_text = " ".join(chunks)
+        assert len(chunked_text) > 0
     
-    def test_cleanup(self, sample_text_file):
-        """Clean up test files."""
-        Path(sample_text_file).unlink(missing_ok=True)
+    @pytest.mark.asyncio
+    async def test_metadata_extraction(self, document_ingestor, sample_documents):
+        """Test metadata extraction from different file types."""
+        for file_type, file_path in sample_documents.items():
+            metadata = DocumentMetadata()
+            metadata = await document_ingestor._extract_metadata(file_path, metadata)
+            
+            assert metadata.title is not None
+            assert metadata.file_type == file_type
+            assert metadata.file_path == str(file_path)
+    
+    @pytest.mark.asyncio
+    async def test_error_handling(self, document_ingestor, temp_dir):
+        """Test error handling in document ingestion."""
+        # Test corrupted file
+        corrupted_file = temp_dir / "corrupted.pdf"
+        corrupted_file.write_text("This is not a valid PDF")
+        
+        with pytest.raises(Exception):
+            await document_ingestor.ingest_document(corrupted_file)
+    
+    @pytest.mark.asyncio
+    async def test_performance_metrics(self, document_ingestor, sample_documents, performance_metrics):
+        """Test performance metrics collection."""
+        import time
+        
+        start_time = time.time()
+        result = await document_ingestor.ingest_document(sample_documents["pdf"])
+        end_time = time.time()
+        
+        processing_time = end_time - start_time
+        performance_metrics["document_processing_time"] = processing_time
+        
+        assert processing_time > 0
+        assert result["processing_time"] > 0

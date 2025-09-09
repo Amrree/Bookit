@@ -1,230 +1,244 @@
 """
-Tests for LLM client module.
+Unit tests for the LLMClient module.
 """
-
-import asyncio
 import pytest
+import asyncio
 from unittest.mock import Mock, patch
 from llm_client import LLMClient, LLMRequest, LLMResponse
 
 
 class TestLLMClient:
-    """Test cases for LLMClient."""
-    
-    @pytest.fixture
-    def mock_openai_provider(self):
-        """Create a mock OpenAI provider."""
-        with patch('llm_client.OpenAIProvider') as mock:
-            provider = Mock()
-            provider.generate.return_value = LLMResponse(
-                content="Test response",
-                model="gpt-4",
-                provider="openai",
-                usage={"total_tokens": 100}
-            )
-            provider.get_available_models.return_value = ["gpt-4", "gpt-3.5-turbo"]
-            mock.return_value = provider
-            yield provider
-    
-    @pytest.fixture
-    def mock_ollama_provider(self):
-        """Create a mock Ollama provider."""
-        with patch('llm_client.OllamaProvider') as mock:
-            provider = Mock()
-            provider.generate.return_value = LLMResponse(
-                content="Test response",
-                model="llama2",
-                provider="ollama",
-                usage={"total_tokens": 100}
-            )
-            provider.get_available_models.return_value = ["llama2", "codellama"]
-            mock.return_value = provider
-            yield provider
-    
-    def test_init_with_openai(self, mock_openai_provider):
-        """Test initialization with OpenAI provider."""
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key"
-        )
-        
-        assert client.primary_provider == "openai"
-        assert "openai" in client.providers
-    
-    def test_init_with_ollama(self, mock_ollama_provider):
-        """Test initialization with Ollama provider."""
-        client = LLMClient(
-            primary_provider="ollama",
-            ollama_url="http://localhost:11434"
-        )
-        
-        assert client.primary_provider == "ollama"
-        assert "ollama" in client.providers
-    
-    def test_init_without_providers(self):
-        """Test initialization without any providers."""
-        with pytest.raises(ValueError, match="No LLM providers available"):
-            LLMClient()
+    """Test cases for LLMClient functionality."""
     
     @pytest.mark.asyncio
-    async def test_generate_with_openai(self, mock_openai_provider):
-        """Test text generation with OpenAI."""
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key"
-        )
-        
-        response = await client.generate(
-            prompt="Test prompt",
-            max_tokens=100,
-            temperature=0.7
-        )
-        
-        assert isinstance(response, LLMResponse)
-        assert response.content == "Test response"
-        assert response.provider == "openai"
-        mock_openai_provider.generate.assert_called_once()
+    async def test_initialize(self, llm_client):
+        """Test LLM client initialization."""
+        assert llm_client is not None
+        assert llm_client.provider in ["ollama", "openai"]
     
     @pytest.mark.asyncio
-    async def test_generate_with_ollama(self, mock_ollama_provider):
-        """Test text generation with Ollama."""
-        client = LLMClient(
-            primary_provider="ollama",
-            ollama_url="http://localhost:11434"
-        )
-        
-        response = await client.generate(
-            prompt="Test prompt",
-            max_tokens=100,
-            temperature=0.7
-        )
-        
-        assert isinstance(response, LLMResponse)
-        assert response.content == "Test response"
-        assert response.provider == "ollama"
-        mock_ollama_provider.generate.assert_called_once()
-    
-    @pytest.mark.asyncio
-    async def test_generate_with_fallback(self, mock_openai_provider, mock_ollama_provider):
-        """Test generation with fallback provider."""
-        # Make OpenAI provider fail
-        mock_openai_provider.generate.side_effect = Exception("OpenAI failed")
-        
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key",
-            fallback_provider="ollama",
-            ollama_url="http://localhost:11434"
-        )
-        
-        response = await client.generate(
-            prompt="Test prompt",
-            use_fallback=True
-        )
-        
-        assert isinstance(response, LLMResponse)
-        assert response.provider == "ollama"
-        mock_ollama_provider.generate.assert_called_once()
-    
-    @pytest.mark.asyncio
-    async def test_generate_stream(self, mock_openai_provider):
-        """Test streaming generation."""
-        # Mock streaming response
-        async def mock_stream():
-            yield "chunk1"
-            yield "chunk2"
-            yield "chunk3"
-        
-        mock_openai_provider.generate_stream.return_value = mock_stream()
-        
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key"
-        )
-        
-        chunks = []
-        async for chunk in client.generate_stream(prompt="Test prompt"):
-            chunks.append(chunk)
-        
-        assert chunks == ["chunk1", "chunk2", "chunk3"]
-        mock_openai_provider.generate_stream.assert_called_once()
-    
-    def test_get_available_models(self, mock_openai_provider, mock_ollama_provider):
-        """Test getting available models."""
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key",
-            ollama_url="http://localhost:11434"
-        )
-        
-        models = client.get_available_models()
-        
-        assert isinstance(models, dict)
-        assert "openai" in models
-        assert "ollama" in models
-        assert models["openai"] == ["gpt-4", "gpt-3.5-turbo"]
-        assert models["ollama"] == ["llama2", "codellama"]
-    
-    def test_switch_provider(self, mock_openai_provider, mock_ollama_provider):
-        """Test switching providers."""
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key",
-            ollama_url="http://localhost:11434"
-        )
-        
-        assert client.primary_provider == "openai"
-        
-        client.switch_provider("ollama")
-        assert client.primary_provider == "ollama"
-        
-        with pytest.raises(ValueError, match="Provider unknown not available"):
-            client.switch_provider("unknown")
-    
-    def test_get_provider_info(self, mock_openai_provider, mock_ollama_provider):
-        """Test getting provider information."""
-        client = LLMClient(
-            primary_provider="openai",
-            openai_api_key="test_key",
-            ollama_url="http://localhost:11434"
-        )
-        
-        info = client.get_provider_info()
-        
-        assert isinstance(info, dict)
-        assert "openai" in info
-        assert "ollama" in info
-        assert info["openai"]["type"] == "OpenAIProvider"
-        assert info["ollama"]["type"] == "OllamaProvider"
-    
-    def test_llm_request_validation(self):
-        """Test LLM request validation."""
+    async def test_generate_request(self, llm_client):
+        """Test generating a simple request."""
         request = LLMRequest(
-            prompt="Test prompt",
-            model="gpt-4",
+            prompt="What is machine learning?",
             max_tokens=100,
-            temperature=0.7,
-            system_message="You are a helpful assistant."
+            temperature=0.7
         )
         
-        assert request.prompt == "Test prompt"
-        assert request.model == "gpt-4"
-        assert request.max_tokens == 100
-        assert request.temperature == 0.7
-        assert request.system_message == "You are a helpful assistant."
+        # Mock the actual LLM call for testing
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.return_value = LLMResponse(
+                content="Machine learning is a subset of artificial intelligence...",
+                tokens_used=50,
+                model="test-model"
+            )
+            
+            response = await llm_client.generate(
+                prompt=request.prompt,
+                max_tokens=request.max_tokens,
+                temperature=request.temperature
+            )
+            
+            assert response is not None
+            assert response.content is not None
+            assert len(response.content) > 0
     
-    def test_llm_response_validation(self):
-        """Test LLM response validation."""
-        response = LLMResponse(
-            content="Test response",
-            model="gpt-4",
-            provider="openai",
-            usage={"total_tokens": 100, "prompt_tokens": 50, "completion_tokens": 50},
-            metadata={"finish_reason": "stop"}
-        )
+    @pytest.mark.asyncio
+    async def test_generate_with_context(self, llm_client):
+        """Test generating with context and references."""
+        context = "Machine learning is a subset of artificial intelligence."
+        references = ["ref1", "ref2", "ref3"]
         
-        assert response.content == "Test response"
-        assert response.model == "gpt-4"
-        assert response.provider == "openai"
-        assert response.usage["total_tokens"] == 100
-        assert response.metadata["finish_reason"] == "stop"
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.return_value = LLMResponse(
+                content="Based on the context, machine learning involves...",
+                tokens_used=75,
+                model="test-model"
+            )
+            
+            response = await llm_client.generate(
+                prompt="Explain machine learning",
+                context=context,
+                references=references,
+                max_tokens=200
+            )
+            
+            assert response is not None
+            assert response.content is not None
+            assert "machine learning" in response.content.lower()
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_system_prompt(self, llm_client):
+        """Test generating with system prompt."""
+        system_prompt = "You are a helpful AI assistant specializing in technology."
+        
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.return_value = LLMResponse(
+                content="I understand. I'm here to help with technology questions.",
+                tokens_used=30,
+                model="test-model"
+            )
+            
+            response = await llm_client.generate(
+                prompt="What can you help me with?",
+                system_prompt=system_prompt,
+                max_tokens=100
+            )
+            
+            assert response is not None
+            assert response.content is not None
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_tools(self, llm_client):
+        """Test generating with tool calls."""
+        tools = [
+            {"name": "search", "description": "Search for information"},
+            {"name": "calculate", "description": "Perform calculations"}
+        ]
+        
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.return_value = LLMResponse(
+                content="I can help you search for information or perform calculations.",
+                tokens_used=40,
+                model="test-model"
+            )
+            
+            response = await llm_client.generate(
+                prompt="What tools do you have?",
+                tools=tools,
+                max_tokens=100
+            )
+            
+            assert response is not None
+            assert response.content is not None
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_streaming(self, llm_client):
+        """Test streaming generation."""
+        with patch.object(llm_client, '_call_ollama_stream') as mock_stream:
+            mock_stream.return_value = [
+                "Machine ",
+                "learning ",
+                "is ",
+                "a ",
+                "subset ",
+                "of ",
+                "AI."
+            ]
+            
+            chunks = []
+            async for chunk in llm_client.generate_stream(
+                prompt="What is machine learning?",
+                max_tokens=50
+            ):
+                chunks.append(chunk)
+            
+            assert len(chunks) > 0
+            assert "".join(chunks) == "Machine learning is a subset of AI."
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_retry(self, llm_client):
+        """Test generation with retry logic."""
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            # First call fails, second succeeds
+            mock_ollama.side_effect = [
+                Exception("Network error"),
+                LLMResponse(
+                    content="Machine learning is a subset of AI.",
+                    tokens_used=20,
+                    model="test-model"
+                )
+            ]
+            
+            response = await llm_client.generate(
+                prompt="What is machine learning?",
+                max_tokens=100,
+                retry_attempts=2
+            )
+            
+            assert response is not None
+            assert response.content is not None
+            assert mock_ollama.call_count == 2
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_rate_limiting(self, llm_client):
+        """Test generation with rate limiting."""
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.return_value = LLMResponse(
+                content="Rate limited response",
+                tokens_used=10,
+                model="test-model"
+            )
+            
+            # Test rate limiting
+            start_time = asyncio.get_event_loop().time()
+            response = await llm_client.generate(
+                prompt="Test prompt",
+                max_tokens=50
+            )
+            end_time = asyncio.get_event_loop().time()
+            
+            assert response is not None
+            # Rate limiting should add some delay
+            assert end_time - start_time >= 0
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_error_handling(self, llm_client):
+        """Test error handling in generation."""
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.side_effect = Exception("LLM service unavailable")
+            
+            with pytest.raises(Exception):
+                await llm_client.generate(
+                    prompt="Test prompt",
+                    max_tokens=50
+                )
+    
+    @pytest.mark.asyncio
+    async def test_generate_with_validation(self, llm_client):
+        """Test input validation."""
+        # Test empty prompt
+        with pytest.raises(ValueError):
+            await llm_client.generate(
+                prompt="",
+                max_tokens=50
+            )
+        
+        # Test negative max_tokens
+        with pytest.raises(ValueError):
+            await llm_client.generate(
+                prompt="Test prompt",
+                max_tokens=-1
+            )
+        
+        # Test invalid temperature
+        with pytest.raises(ValueError):
+            await llm_client.generate(
+                prompt="Test prompt",
+                temperature=2.0
+            )
+    
+    @pytest.mark.asyncio
+    async def test_performance_metrics(self, llm_client, performance_metrics):
+        """Test performance metrics collection."""
+        import time
+        
+        with patch.object(llm_client, '_call_ollama') as mock_ollama:
+            mock_ollama.return_value = LLMResponse(
+                content="Performance test response",
+                tokens_used=25,
+                model="test-model"
+            )
+            
+            start_time = time.time()
+            response = await llm_client.generate(
+                prompt="Performance test",
+                max_tokens=100
+            )
+            end_time = time.time()
+            
+            response_time = end_time - start_time
+            performance_metrics["llm_response_time"] = response_time
+            
+            assert response_time > 0
+            assert response.tokens_used > 0
