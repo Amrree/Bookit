@@ -1,0 +1,12 @@
+{
+  "doc_20250909_184312": {
+    "content": "This is a test document for processing.",
+    "metadata": {
+      "file_path": "test_data/test_document.txt",
+      "file_size": 39,
+      "word_count": 7,
+      "processed_at": "2025-09-09T18:43:12.904575"
+    },
+    "timestamp": "2025-09-09T18:43:12.904608"
+  }
+}
