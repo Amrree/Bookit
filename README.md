@@ -133,35 +133,63 @@ This launches a native Mac application with a clean, Zed-inspired interface feat
 - Tool execution interface
 - Real-time system status
 
+### Complete Book Production Workflow
+
+```bash
+# Create a complete book with full workflow
+python run.py cli book create \
+  --title "The Future of Artificial Intelligence" \
+  --theme "AI and Machine Learning" \
+  --author "AI Book Writer" \
+  --word-count 50000 \
+  --chapters 10 \
+  --references document1.pdf document2.docx
+
+# Check book production status
+python run.py cli book status
+
+# List all completed books
+python run.py cli book list
+
+# Test the complete workflow
+./scripts/run_book_workflow.sh
+```
+
 ### Python API
 
 ```python
 import asyncio
-from book_builder import BookBuilder
+from book_workflow import BookWorkflow
 from memory_manager import MemoryManager
 from llm_client import LLMClient
+from agent_manager import AgentManager
 
-async def main():
-    # Initialize system
+async def create_book():
+    # Initialize system components
     memory_manager = MemoryManager()
-    llm_client = LLMClient(primary_provider="openai", openai_api_key="your-key")
+    llm_client = LLMClient()
+    agent_manager = AgentManager()
+    await agent_manager.start()
     
-    # Create book
-    book_builder = BookBuilder(memory_manager, llm_client, ...)
-    book_id = await book_builder.create_book(
-        title="My Book",
-        author="John Doe",
-        description="A book about AI"
+    # Initialize workflow
+    workflow = BookWorkflow(
+        memory_manager=memory_manager,
+        llm_client=llm_client,
+        # ... other components
     )
     
-    # Generate and build
-    await book_builder.generate_book_outline(book_id)
-    build_id = await book_builder.build_book(book_id)
+    # Create complete book
+    book = await workflow.start_book_production(
+        title="My Book",
+        theme="Technology",
+        target_word_count=50000,
+        chapters_count=10
+    )
     
-    # Export
-    output_path = await book_builder.export_book(book_id, format="markdown")
+    print(f"Book created: {book.title} ({book.word_count:,} words)")
+    await agent_manager.stop()
 
-asyncio.run(main())
+asyncio.run(create_book())
 ```
 
 ## Architecture

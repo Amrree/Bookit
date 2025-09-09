@@ -25,6 +25,8 @@ PyQt6-WebEngine>=6.5.0
 
 # Export formats
 markdown>=3.4.0
+python-docx>=0.8.11
+weasyprint>=60.0
 
 # Testing
 pytest>=7.0.0

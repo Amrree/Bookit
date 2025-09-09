@@ -592,5 +592,249 @@ def cleanup(ctx):
         click.echo(f"❌ Failed to cleanup system: {e}", err=True)
 
 
+@cli.group()
+def book():
+    """Book production workflow commands."""
+    pass
+
+
+@book.command()
+@click.option('--title', required=True, help='Book title')
+@click.option('--theme', required=True, help='Book theme/topic')
+@click.option('--author', default='AI Book Writer', help='Book author')
+@click.option('--word-count', default=50000, help='Target word count')
+@click.option('--chapters', default=10, help='Number of chapters')
+@click.option('--references', multiple=True, help='Reference document paths')
+@click.option('--output-dir', default='./output', help='Output directory')
+def create(title, theme, author, word_count, chapters, references, output_dir):
+    """Create a complete book using the full workflow."""
+    
+    async def run_book_creation():
+        try:
+            # Initialize system components
+            memory_manager = MemoryManager()
+            llm_client = LLMClient()
+            tool_manager = ToolManager()
+            agent_manager = AgentManager()
+            await agent_manager.start()
+            
+            # Initialize agents
+            research_agent = ResearchAgent(
+                agent_id="research_agent",
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                tool_manager=tool_manager
+            )
+            
+            writer_agent = WriterAgent(
+                agent_id="writer_agent",
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                research_agent=research_agent,
+                writing_style=WritingStyle()
+            )
+            
+            editor_agent = EditorAgent(
+                agent_id="editor_agent",
+                llm_client=llm_client,
+                style_guide=StyleGuide()
+            )
+            
+            tool_agent = ToolAgent(
+                agent_id="tool_agent",
+                tool_manager=tool_manager
+            )
+            
+            book_builder = BookBuilder(
+                agent_manager=agent_manager,
+                memory_manager=memory_manager,
+                research_agent=research_agent,
+                writer_agent=writer_agent,
+                editor_agent=editor_agent,
+                tool_agent=tool_agent
+            )
+            
+            # Initialize book workflow
+            from book_workflow import BookWorkflow
+            workflow = BookWorkflow(
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                tool_manager=tool_manager,
+                agent_manager=agent_manager,
+                research_agent=research_agent,
+                writer_agent=writer_agent,
+                editor_agent=editor_agent,
+                tool_agent=tool_agent,
+                book_builder=book_builder
+            )
+            
+            # Start book production
+            click.echo(f"🚀 Starting book production: '{title}'")
+            click.echo(f"📖 Theme: {theme}")
+            click.echo(f"📝 Target: {word_count:,} words in {chapters} chapters")
+            click.echo(f"📚 References: {len(references)} documents")
+            click.echo("")
+            
+            book_metadata = await workflow.start_book_production(
+                title=title,
+                theme=theme,
+                reference_documents=list(references) if references else None,
+                target_word_count=word_count,
+                chapters_count=chapters,
+                author=author
+            )
+            
+            # Display results
+            click.echo("✅ Book production completed!")
+            click.echo("=" * 50)
+            click.echo(f"📖 Title: {book_metadata.title}")
+            click.echo(f"👤 Author: {book_metadata.author}")
+            click.echo(f"📝 Word count: {book_metadata.word_count:,}")
+            click.echo(f"📚 Chapters: {len(book_metadata.chapters)}")
+            click.echo(f"🔗 References: {len(book_metadata.bibliography)}")
+            click.echo(f"🆔 Build ID: {book_metadata.build_id}")
+            click.echo(f"📁 Output: output/{book_metadata.build_id}/")
+            
+            # Show chapter breakdown
+            click.echo("\n📋 Chapter Breakdown:")
+            for chapter in book_metadata.chapters:
+                status_icon = "✅" if chapter.status == "completed" else "⏳"
+                click.echo(f"  {status_icon} Chapter {chapter.chapter_number}: {chapter.title} ({chapter.actual_word_count:,} words)")
+            
+        except Exception as e:
+            click.echo(f"❌ Error creating book: {e}")
+            raise
+    
+    # Run the async function
+    asyncio.run(run_book_creation())
+
+
+@book.command()
+@click.option('--build-id', help='Specific build ID to check')
+def status(build_id):
+    """Check book production status."""
+    
+    async def check_status():
+        try:
+            # Initialize system components
+            memory_manager = MemoryManager()
+            llm_client = LLMClient()
+            tool_manager = ToolManager()
+            agent_manager = AgentManager()
+            await agent_manager.start()
+            
+            # Initialize agents
+            research_agent = ResearchAgent(
+                agent_id="research_agent",
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                tool_manager=tool_manager
+            )
+            
+            writer_agent = WriterAgent(
+                agent_id="writer_agent",
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                research_agent=research_agent,
+                writing_style=WritingStyle()
+            )
+            
+            editor_agent = EditorAgent(
+                agent_id="editor_agent",
+                llm_client=llm_client,
+                style_guide=StyleGuide()
+            )
+            
+            tool_agent = ToolAgent(
+                agent_id="tool_agent",
+                tool_manager=tool_manager
+            )
+            
+            book_builder = BookBuilder(
+                agent_manager=agent_manager,
+                memory_manager=memory_manager,
+                research_agent=research_agent,
+                writer_agent=writer_agent,
+                editor_agent=editor_agent,
+                tool_agent=tool_agent
+            )
+            
+            # Initialize book workflow
+            from book_workflow import BookWorkflow
+            workflow = BookWorkflow(
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                tool_manager=tool_manager,
+                agent_manager=agent_manager,
+                research_agent=research_agent,
+                writer_agent=writer_agent,
+                editor_agent=editor_agent,
+                tool_agent=tool_agent,
+                book_builder=book_builder
+            )
+            
+            # Get status
+            status_info = workflow.get_book_status()
+            
+            if status_info["status"] == "no_book_in_progress":
+                click.echo("ℹ️  No book currently in production")
+                return
+            
+            click.echo("📊 Book Production Status")
+            click.echo("=" * 50)
+            click.echo(f"📖 Title: {status_info['title']}")
+            click.echo(f"🎯 Theme: {status_info['theme']}")
+            click.echo(f"🆔 Build ID: {status_info['build_id']}")
+            click.echo(f"📝 Word count: {status_info['total_word_count']:,} / {status_info['target_word_count']:,}")
+            click.echo(f"📚 Chapters: {status_info['chapters_completed']} / {status_info['total_chapters']}")
+            click.echo(f"📈 Progress: {status_info['completion_percentage']:.1f}%")
+            click.echo(f"🔗 References: {status_info['references_used']}")
+            click.echo(f"📅 Created: {status_info['created_at']}")
+            
+        except Exception as e:
+            click.echo(f"❌ Error checking status: {e}")
+    
+    asyncio.run(check_status())
+
+
+@book.command()
+@click.option('--build-id', help='Build ID to list (shows all if not specified)')
+def list(build_id):
+    """List completed books and their details."""
+    
+    try:
+        import json
+        output_dir = Path("./output")
+        if not output_dir.exists():
+            click.echo("ℹ️  No books have been created yet")
+            return
+        
+        click.echo("📚 Completed Books")
+        click.echo("=" * 50)
+        
+        for book_dir in output_dir.iterdir():
+            if book_dir.is_dir():
+                build_log_path = book_dir / "build_log.json"
+                if build_log_path.exists():
+                    try:
+                        with open(build_log_path, 'r') as f:
+                            build_log = json.load(f)
+                        
+                        book_info = build_log.get("book_metadata", {})
+                        click.echo(f"📖 {book_info.get('title', 'Unknown Title')}")
+                        click.echo(f"   🆔 Build ID: {book_info.get('build_id', 'Unknown')}")
+                        click.echo(f"   📝 Words: {book_info.get('total_word_count', 0):,}")
+                        click.echo(f"   📚 Chapters: {book_info.get('chapter_count', 0)}")
+                        click.echo(f"   📅 Created: {book_info.get('created_at', 'Unknown')}")
+                        click.echo(f"   📁 Directory: {book_dir}")
+                        click.echo("")
+                        
+                    except Exception as e:
+                        click.echo(f"⚠️  Error reading {book_dir}: {e}")
+        
+    except Exception as e:
+        click.echo(f"❌ Error listing books: {e}")
+
+
 if __name__ == '__main__':
     cli()
