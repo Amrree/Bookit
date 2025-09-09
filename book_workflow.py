@@ -208,11 +208,23 @@ class BookWorkflow:
         Focus on creating a coherent narrative arc that builds knowledge progressively.
         """
         
-        research_result = await self.research_agent.start_research(
-            topic=self.current_book.theme,
-            research_prompt=research_prompt,
-            max_sources=20
+        # Create a research topic and start research
+        topic_id = await self.research_agent.start_research(
+            topic_title=self.current_book.theme,
+            description=research_prompt,
+            keywords=[self.current_book.theme, "book outline", "non-fiction"],
+            priority=1
         )
+        
+        # Get research results
+        research_results = await self.research_agent.get_research_results(topic_id)
+        research_summary = await self.research_agent.get_research_summary(topic_id)
+        
+        research_result = {
+            'summary': research_summary.summary if research_summary else "Research completed",
+            'relevant_chunks': [r.chunk_id for r in research_results if r.chunk_id],
+            'sources': len(research_results)
+        }
         
         # Extract outline from research
         outline_prompt = f"""
@@ -250,14 +262,14 @@ class BookWorkflow:
         }}
         """
         
-        outline_result = await self.llm_client.generate_completion(
+        outline_result = await self.llm_client.generate(
             prompt=outline_prompt,
             max_tokens=4000,
             temperature=0.7
         )
         
         try:
-            self.current_book.outline = json.loads(outline_result['content'])
+            self.current_book.outline = json.loads(outline_result.content)
         except json.JSONDecodeError:
             # Fallback to simple outline if JSON parsing fails
             self.current_book.outline = {
@@ -334,11 +346,23 @@ class BookWorkflow:
         Provide detailed, well-sourced information that will help write a compelling introduction.
         """
         
-        research_result = await self.research_agent.start_research(
-            topic=f"{self.current_book.theme} introduction background",
-            research_prompt=research_prompt,
-            max_sources=15
+        # Create research topic for introduction
+        topic_id = await self.research_agent.start_research(
+            topic_title=f"{self.current_book.theme} introduction background",
+            description=research_prompt,
+            keywords=[self.current_book.theme, "introduction", "background", "history"],
+            priority=1
         )
+        
+        # Get research results
+        research_results = await self.research_agent.get_research_results(topic_id)
+        research_summary = await self.research_agent.get_research_summary(topic_id)
+        
+        research_result = {
+            'summary': research_summary.summary if research_summary else "Research completed",
+            'relevant_chunks': [r.chunk_id for r in research_results if r.chunk_id],
+            'sources': len(research_results)
+        }
         
         # Write introduction
         writing_prompt = f"""
@@ -420,11 +444,23 @@ class BookWorkflow:
         Provide comprehensive, well-sourced information for writing this chapter.
         """
         
-        research_result = await self.research_agent.start_research(
-            topic=f"{self.current_book.theme} chapter {chapter_meta.chapter_number}",
-            research_prompt=research_prompt,
-            max_sources=20
+        # Create research topic for chapter
+        topic_id = await self.research_agent.start_research(
+            topic_title=f"{self.current_book.theme} chapter {chapter_meta.chapter_number}",
+            description=research_prompt,
+            keywords=[self.current_book.theme, f"chapter {chapter_meta.chapter_number}", chapter_outline.get('research_focus', '')],
+            priority=1
         )
+        
+        # Get research results
+        research_results = await self.research_agent.get_research_results(topic_id)
+        research_summary = await self.research_agent.get_research_summary(topic_id)
+        
+        research_result = {
+            'summary': research_summary.summary if research_summary else "Research completed",
+            'relevant_chunks': [r.chunk_id for r in research_results if r.chunk_id],
+            'sources': len(research_results)
+        }
         
         # Get context from previous chapters for continuity
         previous_context = await self._get_previous_chapters_context()
@@ -513,11 +549,23 @@ class BookWorkflow:
         This should tie together all the themes and concepts covered in the book.
         """
         
-        research_result = await self.research_agent.start_research(
-            topic=f"{self.current_book.theme} conclusion future implications",
-            research_prompt=research_prompt,
-            max_sources=10
+        # Create research topic for conclusion
+        topic_id = await self.research_agent.start_research(
+            topic_title=f"{self.current_book.theme} conclusion future implications",
+            description=research_prompt,
+            keywords=[self.current_book.theme, "conclusion", "future", "implications", "takeaways"],
+            priority=1
         )
+        
+        # Get research results
+        research_results = await self.research_agent.get_research_results(topic_id)
+        research_summary = await self.research_agent.get_research_summary(topic_id)
+        
+        research_result = {
+            'summary': research_summary.summary if research_summary else "Research completed",
+            'relevant_chunks': [r.chunk_id for r in research_results if r.chunk_id],
+            'sources': len(research_results)
+        }
         
         # Write conclusion
         writing_prompt = f"""
