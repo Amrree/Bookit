@@ -1,0 +1,32 @@
+Sample Document for Testing
+
+This is a sample document used for testing the non-fiction book-writing system.
+It contains multiple paragraphs with various types of content to test the
+document ingestion and processing capabilities.
+
+The document includes:
+- Multiple paragraphs with different content
+- Various sentence structures and lengths
+- Technical terms and concepts
+- Examples and explanations
+
+This content will be used to test:
+1. Document chunking algorithms
+2. Embedding generation
+3. Vector storage and retrieval
+4. RAG pipeline functionality
+5. Content generation and editing
+
+The system should be able to process this document and extract meaningful
+information for use in book generation workflows.
+
+Additional content to test chunking:
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
+eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+This concludes the sample document for testing purposes.
