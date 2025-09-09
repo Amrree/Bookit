@@ -1,0 +1,87 @@
+{
+  "timestamp": "2025-09-09T11:30:14.293385",
+  "test_suites": [
+    {
+      "name": "Core Functionality",
+      "file": "tests/test_core_functionality.py",
+      "status": "PASSED",
+      "duration": 5.765123605728149,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 2,
+      "errors": 0,
+      "total": 34,
+      "returncode": 0,
+      "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.3, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: anyio-4.10.0, asyncio-1.1.0, mock-3.15.0\nasyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 34 items\n\ntests/test_core_functionality.py::TestCoreImports::test_memory_manager_import PASSED [  2%]\ntests/test_core_functionality.py::TestCoreImports::test_llm_client_import PASSED [  5%]\ntests/test_core_functionality.py::TestCoreImports::test_tool_manager_import PASSED [  8%]\ntests/test_core_functionality.py::TestCoreImports::test_agent_manager_import PASSED [ 11%]\ntests/test_core_functionality.py::TestCoreImports::test_agents_import PASSED [ 14%]\ntests/test_core_functionality.py::TestCoreImports::test_document_ingestor_import PASSED [ 17%]\ntests/test_core_functionality.py::TestCoreImports::test_book_workflow_import PASSED [ 20%]\ntests/test_core_functionality.py::TestCoreImports::test_cli_import PASSED [ 23%]\ntests/test_core_functionality.py::TestCoreImports::test_gui_import SKIPPED [ 26%]\ntests/test_core_functionality.py::TestMemoryManagerCore::test_memory_manager_creation PASSED [ 29%]\ntests/test_core_functionality.py::TestMemoryManagerCore::test_memory_entry_creation PASSED [ 32%]\ntests/test_core_functionality.py::TestMemoryManagerCore::test_retrieval_result_creation PASSED [ 35%]\ntests/test_core_functionality.py::TestLLMClientCore::test_llm_client_creation PASSED [ 38%]\ntests/test_core_functionality.py::TestLLMClientCore::test_llm_client_attributes PASSED [ 41%]\ntests/test_core_functionality.py::TestToolManagerCore::test_tool_manager_creation PASSED [ 44%]\ntests/test_core_functionality.py::TestToolManagerCore::test_tool_definition_creation PASSED [ 47%]\ntests/test_core_functionality.py::TestToolManagerCore::test_tool_request_creation PASSED [ 50%]\ntests/test_core_functionality.py::TestAgentManagerCore::test_agent_manager_creation PASSED [ 52%]\ntests/test_core_functionality.py::TestAgentManagerCore::test_agent_status_enum PASSED [ 55%]\ntests/test_core_functionality.py::TestAgentManagerCore::test_task_status_enum PASSED [ 58%]\ntests/test_core_functionality.py::TestDocumentIngestorCore::test_document_ingestor_creation PASSED [ 61%]\ntests/test_core_functionality.py::TestDocumentIngestorCore::test_supported_formats PASSED [ 64%]\ntests/test_core_functionality.py::TestBookWorkflowCore::test_book_workflow_creation PASSED [ 67%]\ntests/test_core_functionality.py::TestCLICore::test_cli_module_structure PASSED [ 70%]\ntests/test_core_functionality.py::TestCLICore::test_cli_commands_available PASSED [ 73%]\ntests/test_core_functionality.py::TestGUICore::test_gui_module_structure SKIPPED [ 76%]\ntests/test_core_functionality.py::TestIntegrationCore::test_module_interconnections PASSED [ 79%]\ntests/test_core_functionality.py::TestIntegrationCore::test_data_flow_compatibility PASSED [ 82%]\ntests/test_core_functionality.py::TestErrorHandling::test_memory_manager_error_handling PASSED [ 85%]\ntests/test_core_functionality.py::TestErrorHandling::test_llm_client_error_handling PASSED [ 88%]\ntests/test_core_functionality.py::TestErrorHandling::test_tool_manager_error_handling PASSED [ 91%]\ntests/test_core_functionality.py::TestPerformance::test_memory_manager_performance PASSED [ 94%]\ntests/test_core_functionality.py::TestPerformance::test_llm_client_performance PASSED [ 97%]\ntests/test_core_functionality.py::TestPerformance::test_tool_manager_performance PASSED [100%]\n\n=============================== warnings summary ===============================\n../home/ubuntu/.local/lib/python3.13/site-packages/PyPDF2/__init__.py:21\n  /home/ubuntu/.local/lib/python3.13/site-packages/PyPDF2/__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=================== 32 passed, 2 skipped, 1 warning in 1.36s ===================\n",
+      "stderr": ""
+    },
+    {
+      "name": "Memory Operations",
+      "file": "tests/test_memory_operations.py",
+      "status": "PASSED",
+      "duration": 6.768459796905518,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "total": 29,
+      "returncode": 0,
+      "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.3, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: anyio-4.10.0, asyncio-1.1.0, mock-3.15.0\nasyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 29 items\n\ntests/test_memory_operations.py::TestMemoryOperations::test_memory_manager_initialization PASSED [  3%]\ntests/test_memory_operations.py::TestMemoryOperations::test_memory_manager_stats PASSED [  6%]\ntests/test_memory_operations.py::TestMemoryOperations::test_memory_clear_operation PASSED [ 10%]\ntests/test_memory_operations.py::TestMemoryOperations::test_memory_entry_validation PASSED [ 13%]\ntests/test_memory_operations.py::TestMemoryOperations::test_retrieval_result_validation PASSED [ 17%]\ntests/test_memory_operations.py::TestLLMOperations::test_llm_client_initialization PASSED [ 20%]\ntests/test_memory_operations.py::TestLLMOperations::test_llm_client_providers PASSED [ 24%]\ntests/test_memory_operations.py::TestLLMOperations::test_llm_generate_with_mock PASSED [ 27%]\ntests/test_memory_operations.py::TestToolOperations::test_tool_manager_initialization PASSED [ 31%]\ntests/test_memory_operations.py::TestToolOperations::test_tool_manager_stats PASSED [ 34%]\ntests/test_memory_operations.py::TestToolOperations::test_tool_definition_validation PASSED [ 37%]\ntests/test_memory_operations.py::TestToolOperations::test_tool_request_validation PASSED [ 41%]\ntests/test_memory_operations.py::TestToolOperations::test_tool_response_validation PASSED [ 44%]\ntests/test_memory_operations.py::TestAgentOperations::test_agent_manager_initialization PASSED [ 48%]\ntests/test_memory_operations.py::TestAgentOperations::test_agent_status_enum_values PASSED [ 51%]\ntests/test_memory_operations.py::TestAgentOperations::test_task_status_enum_values PASSED [ 55%]\ntests/test_memory_operations.py::TestAgentOperations::test_agent_task_validation PASSED [ 58%]\ntests/test_memory_operations.py::TestDocumentOperations::test_document_ingestor_initialization PASSED [ 62%]\ntests/test_memory_operations.py::TestDocumentOperations::test_supported_formats PASSED [ 65%]\ntests/test_memory_operations.py::TestBookWorkflowOperations::test_book_metadata_creation PASSED [ 68%]\ntests/test_memory_operations.py::TestBookWorkflowOperations::test_chapter_metadata_creation PASSED [ 72%]\ntests/test_memory_operations.py::TestIntegrationOperations::test_memory_tool_integration PASSED [ 75%]\ntests/test_memory_operations.py::TestIntegrationOperations::test_agent_memory_integration PASSED [ 79%]\ntests/test_memory_operations.py::TestErrorHandling::test_memory_error_handling PASSED [ 82%]\ntests/test_memory_operations.py::TestErrorHandling::test_tool_error_handling PASSED [ 86%]\ntests/test_memory_operations.py::TestErrorHandling::test_llm_error_handling PASSED [ 89%]\ntests/test_memory_operations.py::TestPerformance::test_memory_initialization_performance PASSED [ 93%]\ntests/test_memory_operations.py::TestPerformance::test_tool_initialization_performance PASSED [ 96%]\ntests/test_memory_operations.py::TestPerformance::test_agent_initialization_performance PASSED [100%]\n\n=============================== warnings summary ===============================\n../home/ubuntu/.local/lib/python3.13/site-packages/PyPDF2/__init__.py:21\n  /home/ubuntu/.local/lib/python3.13/site-packages/PyPDF2/__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 29 passed, 1 warning in 2.44s =========================\n",
+      "stderr": ""
+    },
+    {
+      "name": "Simple Tests",
+      "file": "tests/test_simple.py",
+      "status": "PASSED",
+      "duration": 4.783961772918701,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "total": 9,
+      "returncode": 0,
+      "stdout": "============================= test session starts ==============================\nplatform linux -- Python 3.13.3, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: anyio-4.10.0, asyncio-1.1.0, mock-3.15.0\nasyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 10 items\n\ntests/test_simple.py::TestSimple::test_basic_imports PASSED              [ 10%]\ntests/test_simple.py::TestSimple::test_memory_manager_creation PASSED    [ 20%]\ntests/test_simple.py::TestSimple::test_llm_client_creation PASSED        [ 30%]\ntests/test_simple.py::TestSimple::test_tool_manager_creation PASSED      [ 40%]\ntests/test_simple.py::TestSimple::test_agent_imports PASSED              [ 50%]\ntests/test_simple.py::TestSimple::test_book_workflow_import PASSED       [ 60%]\ntests/test_simple.py::TestSimple::test_document_ingestor_import PASSED   [ 70%]\ntests/test_simple.py::TestSimple::test_cli_import PASSED                 [ 80%]\ntests/test_simple.py::TestSimple::test_gui_import SKIPPED (PyQt6 not\ninstalled - GUI module not available)                                    [ 90%]\ntests/test_simple.py::TestSimple::test_basic_functionality PASSED        [100%]\n\n=============================== warnings summary ===============================\n../home/ubuntu/.local/lib/python3.13/site-packages/PyPDF2/__init__.py:21\n  /home/ubuntu/.local/lib/python3.13/site-packages/PyPDF2/__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=================== 9 passed, 1 skipped, 1 warning in 0.47s ====================\n",
+      "stderr": ""
+    }
+  ],
+  "summary": {
+    "total_tests": 72,
+    "passed": 70,
+    "failed": 0,
+    "skipped": 2,
+    "errors": 0,
+    "success_rate": 100.0,
+    "total_duration": 17.317545175552368,
+    "test_suites": 3
+  },
+  "recommendations": [
+    {
+      "priority": "low",
+      "category": "performance",
+      "issue": "High Success Rate",
+      "solution": "System is performing well. Consider adding more edge case tests.",
+      "impact": "maintenance"
+    },
+    {
+      "priority": "medium",
+      "category": "testing",
+      "issue": "Test Coverage",
+      "solution": "Add integration tests for complete workflows and edge cases.",
+      "impact": "quality"
+    },
+    {
+      "priority": "low",
+      "category": "documentation",
+      "issue": "Test Documentation",
+      "solution": "Add comprehensive test documentation and examples.",
+      "impact": "maintainability"
+    },
+    {
+      "priority": "medium",
+      "category": "automation",
+      "issue": "Continuous Integration",
+      "solution": "Set up automated testing pipeline for continuous validation.",
+      "impact": "development"
+    }
+  ]
+}

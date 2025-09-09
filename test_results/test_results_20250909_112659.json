@@ -1,0 +1,108 @@
+{
+  "timestamp": "2025-09-09T11:26:48.400810",
+  "test_suites": [
+    {
+      "name": "Core Functionality",
+      "file": "tests/test_core_functionality.py",
+      "status": "FAILED",
+      "duration": 3.606433391571045,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "total": 0,
+      "returncode": 4,
+      "stdout": "",
+      "stderr": "ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]\n__main__.py: error: unrecognized arguments: --json-report --json-report-file=test_results.json\n  inifile: /workspace/pyproject.toml\n  rootdir: /workspace\n\n"
+    },
+    {
+      "name": "Memory Operations",
+      "file": "tests/test_memory_operations.py",
+      "status": "FAILED",
+      "duration": 3.5735225677490234,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "total": 0,
+      "returncode": 4,
+      "stdout": "",
+      "stderr": "ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]\n__main__.py: error: unrecognized arguments: --json-report --json-report-file=test_results.json\n  inifile: /workspace/pyproject.toml\n  rootdir: /workspace\n\n"
+    },
+    {
+      "name": "Simple Tests",
+      "file": "tests/test_simple.py",
+      "status": "FAILED",
+      "duration": 3.557845115661621,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "total": 0,
+      "returncode": 4,
+      "stdout": "",
+      "stderr": "ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]\n__main__.py: error: unrecognized arguments: --json-report --json-report-file=test_results.json\n  inifile: /workspace/pyproject.toml\n  rootdir: /workspace\n\n"
+    }
+  ],
+  "summary": {
+    "total_tests": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "success_rate": 0,
+    "total_duration": 10.73780107498169,
+    "test_suites": 3
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "category": "reliability",
+      "issue": "Low Success Rate",
+      "solution": "Critical issues need immediate attention. Review and fix all failing tests.",
+      "impact": "functionality"
+    },
+    {
+      "priority": "high",
+      "category": "testing",
+      "issue": "Failed Test Suite: Core Functionality",
+      "solution": "Review and fix issues in tests/test_core_functionality.py. Check error messages for specific problems.",
+      "impact": "testing"
+    },
+    {
+      "priority": "high",
+      "category": "testing",
+      "issue": "Failed Test Suite: Memory Operations",
+      "solution": "Review and fix issues in tests/test_memory_operations.py. Check error messages for specific problems.",
+      "impact": "testing"
+    },
+    {
+      "priority": "high",
+      "category": "testing",
+      "issue": "Failed Test Suite: Simple Tests",
+      "solution": "Review and fix issues in tests/test_simple.py. Check error messages for specific problems.",
+      "impact": "testing"
+    },
+    {
+      "priority": "medium",
+      "category": "testing",
+      "issue": "Test Coverage",
+      "solution": "Add integration tests for complete workflows and edge cases.",
+      "impact": "quality"
+    },
+    {
+      "priority": "low",
+      "category": "documentation",
+      "issue": "Test Documentation",
+      "solution": "Add comprehensive test documentation and examples.",
+      "impact": "maintainability"
+    },
+    {
+      "priority": "medium",
+      "category": "automation",
+      "issue": "Continuous Integration",
+      "solution": "Set up automated testing pipeline for continuous validation.",
+      "impact": "development"
+    }
+  ]
+}

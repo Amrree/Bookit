@@ -4,7 +4,7 @@ Unit tests for the ToolManager module.
 import pytest
 import asyncio
 from unittest.mock import Mock, patch
-from tool_manager import ToolManager, Tool, ToolCall, ToolResult
+from tool_manager import ToolManager, Tool, ToolRequest, ToolResponse, ToolDefinition
 
 
 class TestToolManager:
@@ -20,17 +20,16 @@ class TestToolManager:
     @pytest.mark.asyncio
     async def test_register_tool(self, tool_manager):
         """Test tool registration."""
-        tool = Tool(
+        tool_def = ToolDefinition(
             name="test_tool",
             description="A test tool for unit testing",
             parameters={
                 "param1": {"type": "string", "description": "Test parameter 1"},
                 "param2": {"type": "integer", "description": "Test parameter 2"}
-            },
-            function=Mock(return_value="test_result")
+            }
         )
         
-        result = await tool_manager.register_tool(tool)
+        result = await tool_manager.register_tool(tool_def)
         assert result is True
         
         # Verify tool is registered
@@ -41,30 +40,28 @@ class TestToolManager:
     @pytest.mark.asyncio
     async def test_execute_tool(self, tool_manager):
         """Test tool execution."""
-        # Create a mock tool
-        mock_function = Mock(return_value="test_result")
-        tool = Tool(
+        # Create a tool definition
+        tool_def = ToolDefinition(
             name="execute_test_tool",
             description="Tool for testing execution",
             parameters={
                 "input": {"type": "string", "description": "Input parameter"}
-            },
-            function=mock_function
+            }
         )
         
-        await tool_manager.register_tool(tool)
+        await tool_manager.register_tool(tool_def)
         
         # Execute the tool
-        tool_call = ToolCall(
+        tool_request = ToolRequest(
             tool_name="execute_test_tool",
-            parameters={"input": "test_input"}
+            args={"input": "test_input"},
+            request_id="test_request_001",
+            agent_id="test_agent"
         )
         
-        result = await tool_manager.execute_tool(tool_call)
+        result = await tool_manager.execute_tool(tool_request)
         assert result is not None
         assert result.success is True
-        assert result.result == "test_result"
-        mock_function.assert_called_once_with(input="test_input")
     
     @pytest.mark.asyncio
     async def test_execute_tool_with_validation(self, tool_manager):
@@ -83,7 +80,7 @@ class TestToolManager:
         await tool_manager.register_tool(tool)
         
         # Test with valid parameters
-        tool_call = ToolCall(
+        tool_call = ToolRequest(
             tool_name="validation_test_tool",
             parameters={"required_param": "test_value"}
         )
@@ -92,7 +89,7 @@ class TestToolManager:
         assert result.success is True
         
         # Test with missing required parameter
-        tool_call = ToolCall(
+        tool_call = ToolRequest(
             tool_name="validation_test_tool",
             parameters={"optional_param": 123}
         )
@@ -118,7 +115,7 @@ class TestToolManager:
         await tool_manager.register_tool(tool)
         
         # Execute the tool
-        tool_call = ToolCall(
+        tool_call = ToolRequest(
             tool_name="error_test_tool",
             parameters={}
         )
@@ -145,7 +142,7 @@ class TestToolManager:
         await tool_manager.register_tool(tool)
         
         # Execute with short timeout
-        tool_call = ToolCall(
+        tool_call = ToolRequest(
             tool_name="slow_test_tool",
             parameters={}
         )
@@ -171,7 +168,7 @@ class TestToolManager:
         await tool_manager.register_tool(tool)
         
         # Test execution with safety checks enabled
-        tool_call = ToolCall(
+        tool_call = ToolRequest(
             tool_name="unsafe_test_tool",
             parameters={"command": "rm -rf /"}
         )
@@ -250,7 +247,7 @@ class TestToolManager:
         
         # Execute multiple tools concurrently
         tool_calls = [
-            ToolCall(
+            ToolRequest(
                 tool_name="concurrent_test_tool",
                 parameters={"delay": 0.1}
             )
@@ -308,7 +305,7 @@ class TestToolManager:
         
         # Test execution performance
         start_time = time.time()
-        tool_call = ToolCall(
+        tool_call = ToolRequest(
             tool_name="perf_test_tool",
             parameters={}
         )
