@@ -114,7 +114,7 @@ def init(ctx, openai_key, ollama_url, embedding_key, vector_db_path, allow_unsaf
         
         # Initialize agent manager
         ctx.agent_manager = AgentManager()
-        await ctx.agent_manager.start()
+        # Note: agent_manager.start() will be called in async functions
         
         # Initialize agents
         ctx.research_agent = ResearchAgent(

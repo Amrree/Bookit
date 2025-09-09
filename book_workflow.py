@@ -208,7 +208,7 @@ class BookWorkflow:
         Focus on creating a coherent narrative arc that builds knowledge progressively.
         """
         
-        research_result = await self.research_agent.research_topic(
+        research_result = await self.research_agent.start_research(
             topic=self.current_book.theme,
             research_prompt=research_prompt,
             max_sources=20
@@ -334,7 +334,7 @@ class BookWorkflow:
         Provide detailed, well-sourced information that will help write a compelling introduction.
         """
         
-        research_result = await self.research_agent.research_topic(
+        research_result = await self.research_agent.start_research(
             topic=f"{self.current_book.theme} introduction background",
             research_prompt=research_prompt,
             max_sources=15
@@ -420,7 +420,7 @@ class BookWorkflow:
         Provide comprehensive, well-sourced information for writing this chapter.
         """
         
-        research_result = await self.research_agent.research_topic(
+        research_result = await self.research_agent.start_research(
             topic=f"{self.current_book.theme} chapter {chapter_meta.chapter_number}",
             research_prompt=research_prompt,
             max_sources=20
@@ -513,7 +513,7 @@ class BookWorkflow:
         This should tie together all the themes and concepts covered in the book.
         """
         
-        research_result = await self.research_agent.research_topic(
+        research_result = await self.research_agent.start_research(
             topic=f"{self.current_book.theme} conclusion future implications",
             research_prompt=research_prompt,
             max_sources=10
