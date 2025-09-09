@@ -48,15 +48,11 @@ Examples:
     elif args.interface == 'gui':
         # Import and run GUI
         try:
-            import streamlit.web.cli as stcli
-            sys.argv = [
-                'streamlit', 'run', 'gui.py',
-                '--server.port', str(args.port),
-                '--server.address', args.host
-            ]
-            stcli.main()
-        except ImportError:
-            print("❌ Streamlit not installed. Install with: pip install streamlit")
+            from gui import main
+            main()
+        except ImportError as e:
+            print(f"❌ PyQt6 not installed. Install with: pip install PyQt6")
+            print(f"Error: {e}")
             sys.exit(1)
     
     else:

@@ -62,16 +62,17 @@ Ollama enables running LLMs locally, ensuring data privacy and offline capabilit
 
 **Candidates Considered:**
 
-- **PyQt**: A set of Python bindings for the Qt application framework.
-- **Tkinter**: Python's standard GUI package.
+- **PyQt6**: A set of Python bindings for the Qt6 application framework with native Mac support.
+- **Tkinter**: Python's standard GUI package (limited Mac native support).
 - **Kivy**: An open-source Python library for rapid development of applications with innovative user interfaces.
 - **Streamlit**: A framework for creating web applications with Python.
+- **Cocoa (PyObjC)**: Native Mac development with Python bindings.
 
-**Final Choice: Streamlit (Deferred Implementation)**
+**Final Choice: PyQt6**
 
 **Justification:**
 
-Given the project's complexity and the need to focus on core functionalities, the implementation of the GUI is deferred. Streamlit is chosen as the future framework due to its simplicity, rapid prototyping capabilities, and excellent integration with Python data science workflows. This decision allows for a more thorough evaluation of GUI frameworks in the future.
+PyQt6 was selected for its excellent Mac native support, modern UI capabilities, and ability to create clean, professional interfaces similar to Zed. It provides native Mac look and feel, proper window management, and supports modern design patterns. The framework allows for creating a clean, well-planned interface with proper Mac integration including native menus, toolbars, and window behaviors. ([PyQt6 Documentation](https://doc.qt.io/qtforpython/))
 
 ### CLI Tooling
 

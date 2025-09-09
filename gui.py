@@ -1,16 +1,16 @@
 """
-GUI Module
+Mac-Native GUI Module
 
-Graphical user interface for the non-fiction book-writing system.
-Provides a web-based interface using Streamlit.
+Clean, Zed-inspired graphical user interface for the non-fiction book-writing system.
+Uses PyQt6 for native Mac integration and modern UI design.
 
 Chosen libraries:
-- Streamlit: Web-based GUI framework
+- PyQt6: Native Mac GUI framework with modern design capabilities
 - asyncio: Asynchronous operations
 - logging: GUI activity logging
 
-Adapted from: Streamlit documentation (https://docs.streamlit.io/)
-Pattern: Multi-page web application with real-time updates
+Adapted from: Zed editor design principles
+Pattern: Clean, minimal interface with powerful functionality
 """
 
 import asyncio
@@ -18,12 +18,25 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, List, Optional, Union
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
+    QSplitter, QTabWidget, QTextEdit, QListWidget, QTreeWidget, 
+    QTreeWidgetItem, QPushButton, QLabel, QLineEdit, QTextBrowser,
+    QProgressBar, QStatusBar, QMenuBar, QMenu, QAction,
+    QFileDialog, QMessageBox, QDialog, QDialogButtonBox, QFormLayout,
+    QSpinBox, QComboBox, QCheckBox, QGroupBox, QScrollArea,
+    QFrame, QSizePolicy, QGridLayout, QStackedWidget
+)
+from PyQt6.QtCore import (
+    Qt, QThread, pyqtSignal, QTimer, QSize, QPropertyAnimation,
+    QEasingCurve, QRect, QPoint
+)
+from PyQt6.QtGui import (
+    QFont, QPalette, QColor, QIcon, QPixmap, QAction,
+    QKeySequence, QTextCursor, QTextCharFormat, QSyntaxHighlighter
+)
 
 # Import system modules
 from document_ingestor import DocumentIngestor
@@ -44,625 +57,898 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Page configuration
-st.set_page_config(
-    page_title="Non-Fiction Book Writer",
-    page_icon="📚",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
-# Custom CSS
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #1f77b4;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .status-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 0.5rem 0;
-    }
-    .success-message {
-        color: #28a745;
-        font-weight: bold;
-    }
-    .error-message {
-        color: #dc3545;
-        font-weight: bold;
-    }
-    .warning-message {
-        color: #ffc107;
-        font-weight: bold;
-    }
-</style>
-""", unsafe_allow_html=True)
+class SystemWorker(QThread):
+    """Background worker for system operations."""
+    
+    operation_completed = pyqtSignal(str, object)
+    operation_failed = pyqtSignal(str, str)
+    progress_updated = pyqtSignal(int)
+    
+    def __init__(self, operation, *args, **kwargs):
+        super().__init__()
+        self.operation = operation
+        self.args = args
+        self.kwargs = kwargs
+    
+    def run(self):
+        try:
+            result = asyncio.run(self.operation(*self.args, **self.kwargs))
+            self.operation_completed.emit("success", result)
+        except Exception as e:
+            self.operation_failed.emit("error", str(e))
 
 
-class GUIManager:
-    """Manages the GUI application state and system initialization."""
+class ConfigurationDialog(QDialog):
+    """Configuration dialog with Zed-inspired design."""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("System Configuration")
+        self.setModal(True)
+        self.resize(500, 400)
+        self.setup_ui()
+        self.apply_zed_style()
+    
+    def setup_ui(self):
+        layout = QVBoxLayout()
+        
+        # API Configuration Group
+        api_group = QGroupBox("API Configuration")
+        api_layout = QFormLayout()
+        
+        self.openai_key = QLineEdit()
+        self.openai_key.setEchoMode(QLineEdit.EchoMode.Password)
+        self.openai_key.setPlaceholderText("Enter OpenAI API key")
+        
+        self.ollama_url = QLineEdit()
+        self.ollama_url.setText("http://localhost:11434")
+        self.ollama_url.setPlaceholderText("Ollama server URL")
+        
+        self.embedding_key = QLineEdit()
+        self.embedding_key.setEchoMode(QLineEdit.EchoMode.Password)
+        self.embedding_key.setPlaceholderText("Optional: Embedding API key")
+        
+        api_layout.addRow("OpenAI API Key:", self.openai_key)
+        api_layout.addRow("Ollama URL:", self.ollama_url)
+        api_layout.addRow("Embedding API Key:", self.embedding_key)
+        api_group.setLayout(api_layout)
+        
+        # System Configuration Group
+        system_group = QGroupBox("System Configuration")
+        system_layout = QFormLayout()
+        
+        self.vector_db_path = QLineEdit()
+        self.vector_db_path.setText("./memory_db")
+        self.vector_db_path.setPlaceholderText("Vector database path")
+        
+        self.allow_unsafe = QCheckBox()
+        self.allow_unsafe.setText("Allow unsafe tools")
+        
+        system_layout.addRow("Vector DB Path:", self.vector_db_path)
+        system_layout.addRow("", self.allow_unsafe)
+        system_group.setLayout(system_layout)
+        
+        # Buttons
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        
+        layout.addWidget(api_group)
+        layout.addWidget(system_group)
+        layout.addWidget(button_box)
+        self.setLayout(layout)
+    
+    def apply_zed_style(self):
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #1e1e1e;
+                color: #d4d4d4;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 2px solid #3c3c3c;
+                border-radius: 5px;
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px 0 5px;
+            }
+            QLineEdit {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                padding: 5px;
+                color: #d4d4d4;
+            }
+            QLineEdit:focus {
+                border-color: #007acc;
+            }
+            QCheckBox {
+                color: #d4d4d4;
+            }
+            QCheckBox::indicator {
+                width: 16px;
+                height: 16px;
+            }
+            QCheckBox::indicator:checked {
+                background-color: #007acc;
+                border: 1px solid #007acc;
+            }
+            QPushButton {
+                background-color: #0e639c;
+                border: none;
+                border-radius: 3px;
+                padding: 8px 16px;
+                color: white;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1177bb;
+            }
+            QPushButton:pressed {
+                background-color: #0d5a8a;
+            }
+        """)
+
+
+class MainWindow(QMainWindow):
+    """Main application window with Zed-inspired design."""
     
     def __init__(self):
+        super().__init__()
         self.system_initialized = False
-        self.memory_manager = None
-        self.llm_client = None
-        self.tool_manager = None
-        self.agent_manager = None
-        self.research_agent = None
-        self.writer_agent = None
-        self.editor_agent = None
-        self.tool_agent = None
-        self.book_builder = None
+        self.system_components = {}
+        self.setup_ui()
+        self.apply_zed_style()
+        self.setup_connections()
+        
+        # Initialize with configuration dialog
+        self.show_configuration_dialog()
     
-    async def initialize_system(self):
-        """Initialize the book-writing system."""
+    def setup_ui(self):
+        """Setup the main user interface."""
+        self.setWindowTitle("Non-Fiction Book Writer")
+        self.setMinimumSize(1200, 800)
+        self.resize(1400, 900)
+        
+        # Central widget with splitter
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        
+        # Main layout
+        main_layout = QHBoxLayout(central_widget)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Create splitter
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        main_layout.addWidget(splitter)
+        
+        # Left sidebar
+        self.setup_sidebar(splitter)
+        
+        # Main content area
+        self.setup_main_content(splitter)
+        
+        # Set splitter proportions
+        splitter.setSizes([300, 1100])
+        
+        # Status bar
+        self.setup_status_bar()
+        
+        # Menu bar
+        self.setup_menu_bar()
+    
+    def setup_sidebar(self, parent):
+        """Setup the left sidebar."""
+        sidebar = QWidget()
+        sidebar.setFixedWidth(300)
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(10, 10, 10, 10)
+        
+        # System status
+        status_group = QGroupBox("System Status")
+        status_layout = QVBoxLayout()
+        
+        self.status_label = QLabel("Not Initialized")
+        self.status_label.setStyleSheet("color: #f48771; font-weight: bold;")
+        
+        self.memory_chunks_label = QLabel("Memory: 0 chunks")
+        self.agents_label = QLabel("Agents: 0 active")
+        self.tools_label = QLabel("Tools: 0 available")
+        
+        status_layout.addWidget(self.status_label)
+        status_layout.addWidget(self.memory_chunks_label)
+        status_layout.addWidget(self.agents_label)
+        status_layout.addWidget(self.tools_label)
+        status_group.setLayout(status_layout)
+        
+        # Navigation
+        nav_group = QGroupBox("Navigation")
+        nav_layout = QVBoxLayout()
+        
+        self.nav_buttons = {
+            'documents': QPushButton("📄 Documents"),
+            'research': QPushButton("🔍 Research"),
+            'books': QPushButton("📚 Books"),
+            'tools': QPushButton("🔧 Tools"),
+            'settings': QPushButton("⚙️ Settings")
+        }
+        
+        for button in self.nav_buttons.values():
+            button.setCheckable(True)
+            button.setStyleSheet("""
+                QPushButton {
+                    text-align: left;
+                    padding: 8px 12px;
+                    border: none;
+                    background-color: transparent;
+                    color: #d4d4d4;
+                }
+                QPushButton:hover {
+                    background-color: #2d2d30;
+                }
+                QPushButton:checked {
+                    background-color: #0e639c;
+                    color: white;
+                }
+            """)
+            nav_layout.addWidget(button)
+        
+        nav_group.setLayout(nav_layout)
+        
+        # Quick actions
+        actions_group = QGroupBox("Quick Actions")
+        actions_layout = QVBoxLayout()
+        
+        self.new_book_btn = QPushButton("New Book")
+        self.import_doc_btn = QPushButton("Import Document")
+        self.start_research_btn = QPushButton("Start Research")
+        
+        for btn in [self.new_book_btn, self.import_doc_btn, self.start_research_btn]:
+            btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #0e639c;
+                    border: none;
+                    border-radius: 3px;
+                    padding: 8px;
+                    color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #1177bb;
+                }
+                QPushButton:disabled {
+                    background-color: #3c3c3c;
+                    color: #666666;
+                }
+            """)
+            actions_layout.addWidget(btn)
+        
+        actions_group.setLayout(actions_layout)
+        
+        sidebar_layout.addWidget(status_group)
+        sidebar_layout.addWidget(nav_group)
+        sidebar_layout.addWidget(actions_group)
+        sidebar_layout.addStretch()
+        
+        parent.addWidget(sidebar)
+    
+    def setup_main_content(self, parent):
+        """Setup the main content area."""
+        self.content_stack = QStackedWidget()
+        parent.addWidget(self.content_stack)
+        
+        # Documents page
+        self.setup_documents_page()
+        
+        # Research page
+        self.setup_research_page()
+        
+        # Books page
+        self.setup_books_page()
+        
+        # Tools page
+        self.setup_tools_page()
+        
+        # Settings page
+        self.setup_settings_page()
+    
+    def setup_documents_page(self):
+        """Setup the documents management page."""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        
+        # Header
+        header = QHBoxLayout()
+        title = QLabel("Documents")
+        title.setStyleSheet("font-size: 24px; font-weight: bold; color: #d4d4d4;")
+        header.addWidget(title)
+        header.addStretch()
+        
+        import_btn = QPushButton("Import Document")
+        import_btn.clicked.connect(self.import_document)
+        header.addWidget(import_btn)
+        
+        layout.addLayout(header)
+        
+        # Document list
+        self.documents_list = QTreeWidget()
+        self.documents_list.setHeaderLabels(["Name", "Type", "Chunks", "Size"])
+        self.documents_list.setStyleSheet("""
+            QTreeWidget {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QTreeWidget::item {
+                padding: 5px;
+                border-bottom: 1px solid #3c3c3c;
+            }
+            QTreeWidget::item:selected {
+                background-color: #0e639c;
+            }
+        """)
+        
+        layout.addWidget(self.documents_list)
+        
+        self.content_stack.addWidget(page)
+    
+    def setup_research_page(self):
+        """Setup the research management page."""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        
+        # Header
+        header = QHBoxLayout()
+        title = QLabel("Research")
+        title.setStyleSheet("font-size: 24px; font-weight: bold; color: #d4d4d4;")
+        header.addWidget(title)
+        header.addStretch()
+        
+        new_research_btn = QPushButton("New Research")
+        new_research_btn.clicked.connect(self.new_research)
+        header.addWidget(new_research_btn)
+        
+        layout.addLayout(header)
+        
+        # Research topics list
+        self.research_list = QListWidget()
+        self.research_list.setStyleSheet("""
+            QListWidget {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QListWidget::item {
+                padding: 10px;
+                border-bottom: 1px solid #3c3c3c;
+            }
+            QListWidget::item:selected {
+                background-color: #0e639c;
+            }
+        """)
+        
+        layout.addWidget(self.research_list)
+        
+        self.content_stack.addWidget(page)
+    
+    def setup_books_page(self):
+        """Setup the books management page."""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        
+        # Header
+        header = QHBoxLayout()
+        title = QLabel("Books")
+        title.setStyleSheet("font-size: 24px; font-weight: bold; color: #d4d4d4;")
+        header.addWidget(title)
+        header.addStretch()
+        
+        new_book_btn = QPushButton("New Book")
+        new_book_btn.clicked.connect(self.new_book)
+        header.addWidget(new_book_btn)
+        
+        layout.addLayout(header)
+        
+        # Books list
+        self.books_list = QTreeWidget()
+        self.books_list.setHeaderLabels(["Title", "Author", "Status", "Chapters", "Progress"])
+        self.books_list.setStyleSheet("""
+            QTreeWidget {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QTreeWidget::item {
+                padding: 5px;
+                border-bottom: 1px solid #3c3c3c;
+            }
+            QTreeWidget::item:selected {
+                background-color: #0e639c;
+            }
+        """)
+        
+        layout.addWidget(self.books_list)
+        
+        self.content_stack.addWidget(page)
+    
+    def setup_tools_page(self):
+        """Setup the tools management page."""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        
+        # Header
+        header = QHBoxLayout()
+        title = QLabel("Tools")
+        title.setStyleSheet("font-size: 24px; font-weight: bold; color: #d4d4d4;")
+        header.addWidget(title)
+        header.addStretch()
+        
+        refresh_btn = QPushButton("Refresh")
+        refresh_btn.clicked.connect(self.refresh_tools)
+        header.addWidget(refresh_btn)
+        
+        layout.addLayout(header)
+        
+        # Tools list
+        self.tools_list = QListWidget()
+        self.tools_list.setStyleSheet("""
+            QListWidget {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QListWidget::item {
+                padding: 10px;
+                border-bottom: 1px solid #3c3c3c;
+            }
+            QListWidget::item:selected {
+                background-color: #0e639c;
+            }
+        """)
+        
+        layout.addWidget(self.tools_list)
+        
+        self.content_stack.addWidget(page)
+    
+    def setup_settings_page(self):
+        """Setup the settings page."""
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        
+        # Header
+        header = QHBoxLayout()
+        title = QLabel("Settings")
+        title.setStyleSheet("font-size: 24px; font-weight: bold; color: #d4d4d4;")
+        header.addWidget(title)
+        header.addStretch()
+        
+        config_btn = QPushButton("Configure System")
+        config_btn.clicked.connect(self.show_configuration_dialog)
+        header.addWidget(config_btn)
+        
+        layout.addLayout(header)
+        
+        # Settings content
+        settings_group = QGroupBox("System Configuration")
+        settings_layout = QFormLayout()
+        
+        self.current_config = QTextEdit()
+        self.current_config.setReadOnly(True)
+        self.current_config.setMaximumHeight(200)
+        
+        settings_layout.addRow("Current Configuration:", self.current_config)
+        settings_group.setLayout(settings_layout)
+        
+        layout.addWidget(settings_group)
+        layout.addStretch()
+        
+        self.content_stack.addWidget(page)
+    
+    def setup_status_bar(self):
+        """Setup the status bar."""
+        self.status_bar = QStatusBar()
+        self.setStatusBar(self.status_bar)
+        
+        self.status_bar.showMessage("Ready")
+        
+        # Progress bar
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setVisible(False)
+        self.status_bar.addPermanentWidget(self.progress_bar)
+    
+    def setup_menu_bar(self):
+        """Setup the menu bar."""
+        menubar = self.menuBar()
+        
+        # File menu
+        file_menu = menubar.addMenu("File")
+        
+        import_action = QAction("Import Document", self)
+        import_action.triggered.connect(self.import_document)
+        file_menu.addAction(import_action)
+        
+        file_menu.addSeparator()
+        
+        exit_action = QAction("Quit", self)
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
+        
+        # Edit menu
+        edit_menu = menubar.addMenu("Edit")
+        
+        settings_action = QAction("Settings", self)
+        settings_action.triggered.connect(self.show_configuration_dialog)
+        edit_menu.addAction(settings_action)
+        
+        # View menu
+        view_menu = menubar.addMenu("View")
+        
+        for name, button in self.nav_buttons.items():
+            action = QAction(name.title(), self)
+            action.triggered.connect(lambda checked, n=name: self.switch_page(n))
+            view_menu.addAction(action)
+    
+    def apply_zed_style(self):
+        """Apply Zed-inspired styling to the application."""
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #1e1e1e;
+                color: #d4d4d4;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 2px solid #3c3c3c;
+                border-radius: 5px;
+                margin-top: 10px;
+                padding-top: 10px;
+                color: #d4d4d4;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px 0 5px;
+            }
+            QPushButton {
+                background-color: #0e639c;
+                border: none;
+                border-radius: 3px;
+                padding: 8px 16px;
+                color: white;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1177bb;
+            }
+            QPushButton:pressed {
+                background-color: #0d5a8a;
+            }
+            QPushButton:disabled {
+                background-color: #3c3c3c;
+                color: #666666;
+            }
+            QLineEdit {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                padding: 5px;
+                color: #d4d4d4;
+            }
+            QLineEdit:focus {
+                border-color: #007acc;
+            }
+            QTextEdit {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QListWidget {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QListWidget::item {
+                padding: 5px;
+                border-bottom: 1px solid #3c3c3c;
+            }
+            QListWidget::item:selected {
+                background-color: #0e639c;
+            }
+            QTreeWidget {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                border-radius: 3px;
+                color: #d4d4d4;
+            }
+            QTreeWidget::item {
+                padding: 5px;
+                border-bottom: 1px solid #3c3c3c;
+            }
+            QTreeWidget::item:selected {
+                background-color: #0e639c;
+            }
+            QStatusBar {
+                background-color: #2d2d30;
+                border-top: 1px solid #3c3c3c;
+                color: #d4d4d4;
+            }
+            QMenuBar {
+                background-color: #2d2d30;
+                border-bottom: 1px solid #3c3c3c;
+                color: #d4d4d4;
+            }
+            QMenuBar::item {
+                padding: 5px 10px;
+            }
+            QMenuBar::item:selected {
+                background-color: #0e639c;
+            }
+            QMenu {
+                background-color: #2d2d30;
+                border: 1px solid #3c3c3c;
+                color: #d4d4d4;
+            }
+            QMenu::item {
+                padding: 5px 20px;
+            }
+            QMenu::item:selected {
+                background-color: #0e639c;
+            }
+        """)
+    
+    def setup_connections(self):
+        """Setup signal connections."""
+        # Navigation buttons
+        for name, button in self.nav_buttons.items():
+            button.clicked.connect(lambda checked, n=name: self.switch_page(n))
+        
+        # Quick action buttons
+        self.new_book_btn.clicked.connect(self.new_book)
+        self.import_doc_btn.clicked.connect(self.import_document)
+        self.start_research_btn.clicked.connect(self.new_research)
+    
+    def show_configuration_dialog(self):
+        """Show the configuration dialog."""
+        dialog = ConfigurationDialog(self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.initialize_system(
+                openai_key=dialog.openai_key.text(),
+                ollama_url=dialog.ollama_url.text(),
+                embedding_key=dialog.embedding_key.text(),
+                vector_db_path=dialog.vector_db_path.text(),
+                allow_unsafe=dialog.allow_unsafe.isChecked()
+            )
+    
+    def initialize_system(self, **config):
+        """Initialize the system with given configuration."""
+        self.status_bar.showMessage("Initializing system...")
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setRange(0, 0)  # Indeterminate progress
+        
+        # Start initialization in background thread
+        self.worker = SystemWorker(self._async_initialize_system, config)
+        self.worker.operation_completed.connect(self.on_system_initialized)
+        self.worker.operation_failed.connect(self.on_system_initialization_failed)
+        self.worker.start()
+    
+    async def _async_initialize_system(self, config):
+        """Async system initialization."""
         try:
-            # Get configuration from environment or session state
-            openai_key = os.getenv('LLM_REMOTE_API_KEY') or st.session_state.get('openai_key')
-            ollama_url = os.getenv('OLLAMA_LOCAL_URL', 'http://localhost:11434')
-            embedding_key = os.getenv('EMBEDDING_API_KEY') or st.session_state.get('embedding_key')
-            vector_db_path = os.getenv('VECTOR_DB_PATH', './memory_db')
-            allow_unsafe = os.getenv('TOOL_MANAGER_ALLOW_UNSAFE', 'false').lower() == 'true'
-            
-            # Initialize memory manager
-            self.memory_manager = MemoryManager(
-                persist_directory=vector_db_path,
-                use_remote_embeddings=bool(embedding_key),
-                openai_api_key=embedding_key
+            # Initialize components
+            memory_manager = MemoryManager(
+                persist_directory=config.get('vector_db_path', './memory_db'),
+                use_remote_embeddings=bool(config.get('embedding_key')),
+                openai_api_key=config.get('embedding_key')
             )
             
-            # Initialize LLM client
-            self.llm_client = LLMClient(
-                primary_provider="openai" if openai_key else "ollama",
-                openai_api_key=openai_key,
-                ollama_url=ollama_url
+            llm_client = LLMClient(
+                primary_provider="openai" if config.get('openai_key') else "ollama",
+                openai_api_key=config.get('openai_key'),
+                ollama_url=config.get('ollama_url', 'http://localhost:11434')
             )
             
-            # Initialize tool manager
-            self.tool_manager = ToolManager(
-                allow_unsafe=allow_unsafe,
+            tool_manager = ToolManager(
+                allow_unsafe=config.get('allow_unsafe', False),
                 allow_restricted=True
             )
             
-            # Initialize agent manager
-            self.agent_manager = AgentManager()
-            await self.agent_manager.start()
+            agent_manager = AgentManager()
+            await agent_manager.start()
             
             # Initialize agents
-            self.research_agent = ResearchAgent(
+            research_agent = ResearchAgent(
                 agent_id="research_agent",
-                memory_manager=self.memory_manager,
-                llm_client=self.llm_client,
-                tool_manager=self.tool_manager
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                tool_manager=tool_manager
             )
             
-            self.writer_agent = WriterAgent(
+            writer_agent = WriterAgent(
                 agent_id="writer_agent",
-                memory_manager=self.memory_manager,
-                llm_client=self.llm_client,
-                research_agent=self.research_agent,
+                memory_manager=memory_manager,
+                llm_client=llm_client,
+                research_agent=research_agent,
                 writing_style=WritingStyle()
             )
             
-            self.editor_agent = EditorAgent(
+            editor_agent = EditorAgent(
                 agent_id="editor_agent",
-                llm_client=self.llm_client,
+                llm_client=llm_client,
                 style_guide=StyleGuide()
             )
             
-            self.tool_agent = ToolAgent(
+            tool_agent = ToolAgent(
                 agent_id="tool_agent",
-                tool_manager=self.tool_manager
+                tool_manager=tool_manager
             )
             
             # Register agents
-            self.agent_manager.register_agent(
-                self.research_agent, "research_agent", "research", 
-                ["research", "web_search", "information_gathering"]
-            )
-            self.agent_manager.register_agent(
-                self.writer_agent, "writer_agent", "writer",
-                ["writing", "drafting", "content_generation"]
-            )
-            self.agent_manager.register_agent(
-                self.editor_agent, "editor_agent", "editor",
-                ["editing", "review", "quality_assurance"]
-            )
-            self.agent_manager.register_agent(
-                self.tool_agent, "tool_agent", "tool",
-                ["tool_execution", "automation"]
+            agent_manager.register_agent(research_agent, "research_agent", "research", ["research"])
+            agent_manager.register_agent(writer_agent, "writer_agent", "writer", ["writing"])
+            agent_manager.register_agent(editor_agent, "editor_agent", "editor", ["editing"])
+            agent_manager.register_agent(tool_agent, "tool_agent", "tool", ["tools"])
+            
+            book_builder = BookBuilder(
+                agent_manager=agent_manager,
+                memory_manager=memory_manager,
+                research_agent=research_agent,
+                writer_agent=writer_agent,
+                editor_agent=editor_agent,
+                tool_agent=tool_agent
             )
             
-            # Initialize book builder
-            self.book_builder = BookBuilder(
-                agent_manager=self.agent_manager,
-                memory_manager=self.memory_manager,
-                research_agent=self.research_agent,
-                writer_agent=self.writer_agent,
-                editor_agent=self.editor_agent,
-                tool_agent=self.tool_agent
-            )
-            
-            self.system_initialized = True
-            return True
+            return {
+                'memory_manager': memory_manager,
+                'llm_client': llm_client,
+                'tool_manager': tool_manager,
+                'agent_manager': agent_manager,
+                'research_agent': research_agent,
+                'writer_agent': writer_agent,
+                'editor_agent': editor_agent,
+                'tool_agent': tool_agent,
+                'book_builder': book_builder
+            }
             
         except Exception as e:
-            st.error(f"Failed to initialize system: {e}")
-            return False
-
-
-# Initialize GUI manager
-if 'gui_manager' not in st.session_state:
-    st.session_state.gui_manager = GUIManager()
+            raise Exception(f"System initialization failed: {e}")
+    
+    def on_system_initialized(self, status, result):
+        """Handle successful system initialization."""
+        self.system_components = result
+        self.system_initialized = True
+        
+        self.progress_bar.setVisible(False)
+        self.status_bar.showMessage("System initialized successfully")
+        
+        # Update UI
+        self.status_label.setText("Initialized")
+        self.status_label.setStyleSheet("color: #4ec9b0; font-weight: bold;")
+        
+        # Enable buttons
+        for btn in [self.new_book_btn, self.import_doc_btn, self.start_research_btn]:
+            btn.setEnabled(True)
+        
+        # Update status
+        self.update_system_status()
+    
+    def on_system_initialization_failed(self, status, error):
+        """Handle failed system initialization."""
+        self.progress_bar.setVisible(False)
+        self.status_bar.showMessage(f"System initialization failed: {error}")
+        
+        QMessageBox.critical(self, "Initialization Error", f"Failed to initialize system:\n{error}")
+    
+    def update_system_status(self):
+        """Update the system status display."""
+        if not self.system_initialized:
+            return
+        
+        try:
+            # Update memory stats
+            memory_stats = self.system_components['memory_manager'].get_stats()
+            self.memory_chunks_label.setText(f"Memory: {memory_stats['total_chunks']} chunks")
+            
+            # Update agent stats
+            agent_stats = self.system_components['agent_manager'].get_stats()
+            self.agents_label.setText(f"Agents: {agent_stats['total_agents']} active")
+            
+            # Update tool stats
+            tool_stats = self.system_components['tool_manager'].get_execution_stats()
+            self.tools_label.setText(f"Tools: {tool_stats['available_tools']} available")
+            
+        except Exception as e:
+            logger.error(f"Failed to update system status: {e}")
+    
+    def switch_page(self, page_name):
+        """Switch to the specified page."""
+        page_map = {
+            'documents': 0,
+            'research': 1,
+            'books': 2,
+            'tools': 3,
+            'settings': 4
+        }
+        
+        if page_name in page_map:
+            self.content_stack.setCurrentIndex(page_map[page_name])
+            
+            # Update button states
+            for name, button in self.nav_buttons.items():
+                button.setChecked(name == page_name)
+    
+    def import_document(self):
+        """Import a document."""
+        if not self.system_initialized:
+            QMessageBox.warning(self, "Not Initialized", "Please initialize the system first.")
+            return
+        
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Import Document",
+            "",
+            "All Supported (*.pdf *.docx *.epub *.txt *.md);;PDF (*.pdf);;Word (*.docx);;EPUB (*.epub);;Text (*.txt);;Markdown (*.md)"
+        )
+        
+        if file_path:
+            self.status_bar.showMessage("Importing document...")
+            # TODO: Implement document import
+            QMessageBox.information(self, "Import", f"Document imported: {Path(file_path).name}")
+    
+    def new_research(self):
+        """Start new research."""
+        if not self.system_initialized:
+            QMessageBox.warning(self, "Not Initialized", "Please initialize the system first.")
+            return
+        
+        # TODO: Implement research dialog
+        QMessageBox.information(self, "New Research", "Research functionality will be implemented here.")
+    
+    def new_book(self):
+        """Create new book."""
+        if not self.system_initialized:
+            QMessageBox.warning(self, "Not Initialized", "Please initialize the system first.")
+            return
+        
+        # TODO: Implement book creation dialog
+        QMessageBox.information(self, "New Book", "Book creation functionality will be implemented here.")
+    
+    def refresh_tools(self):
+        """Refresh the tools list."""
+        if not self.system_initialized:
+            return
+        
+        # TODO: Implement tools refresh
+        pass
 
 
 def main():
-    """Main GUI application."""
-    st.markdown('<h1 class="main-header">📚 Non-Fiction Book Writer</h1>', unsafe_allow_html=True)
+    """Main application entry point."""
+    app = QApplication(sys.argv)
+    app.setApplicationName("Non-Fiction Book Writer")
+    app.setApplicationVersion("1.0.0")
     
-    # Sidebar navigation
-    st.sidebar.title("Navigation")
-    page = st.sidebar.selectbox(
-        "Choose a page",
-        ["Home", "Configuration", "Document Ingestion", "Research", "Book Management", "Tools", "System Status"]
-    )
+    # Set application style
+    app.setStyle('Fusion')
     
-    # Initialize system if not already done
-    if not st.session_state.gui_manager.system_initialized and page != "Configuration":
-        st.warning("⚠️ System not initialized. Please configure the system first.")
-        page = "Configuration"
+    # Create and show main window
+    window = MainWindow()
+    window.show()
     
-    # Route to appropriate page
-    if page == "Home":
-        show_home_page()
-    elif page == "Configuration":
-        show_configuration_page()
-    elif page == "Document Ingestion":
-        show_ingestion_page()
-    elif page == "Research":
-        show_research_page()
-    elif page == "Book Management":
-        show_book_management_page()
-    elif page == "Tools":
-        show_tools_page()
-    elif page == "System Status":
-        show_status_page()
+    # Run the application
+    sys.exit(app.exec())
 
 
-def show_home_page():
-    """Display the home page."""
-    st.markdown("## Welcome to the Non-Fiction Book Writer")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("### Features")
-        st.markdown("""
-        - **Document Ingestion**: Upload and process PDF, DOCX, EPUB, and text files
-        - **Research Agent**: Autonomous research using RAG and web search
-        - **Writer Agent**: AI-powered content generation with style consistency
-        - **Editor Agent**: Quality assurance and content review
-        - **Book Builder**: Complete book generation workflow
-        - **Multiple Export Formats**: Markdown, DOCX, and PDF
-        """)
-    
-    with col2:
-        st.markdown("### Quick Start")
-        st.markdown("""
-        1. **Configure** the system with your API keys
-        2. **Ingest** your reference documents
-        3. **Research** topics for your book
-        4. **Create** a new book project
-        5. **Generate** the book outline
-        6. **Build** the complete book
-        7. **Export** to your preferred format
-        """)
-    
-    # System status overview
-    if st.session_state.gui_manager.system_initialized:
-        st.markdown("### System Status")
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            memory_stats = st.session_state.gui_manager.memory_manager.get_stats()
-            st.metric("Memory Chunks", memory_stats['total_chunks'])
-        
-        with col2:
-            agent_stats = st.session_state.gui_manager.agent_manager.get_stats()
-            st.metric("Active Agents", agent_stats['total_agents'])
-        
-        with col3:
-            tool_stats = st.session_state.gui_manager.tool_manager.get_execution_stats()
-            st.metric("Available Tools", tool_stats['available_tools'])
-
-
-def show_configuration_page():
-    """Display the configuration page."""
-    st.markdown("## System Configuration")
-    
-    with st.form("config_form"):
-        st.markdown("### API Configuration")
-        
-        openai_key = st.text_input(
-            "OpenAI API Key",
-            value=st.session_state.get('openai_key', ''),
-            type="password",
-            help="Required for remote LLM access"
-        )
-        
-        ollama_url = st.text_input(
-            "Ollama URL",
-            value=st.session_state.get('ollama_url', 'http://localhost:11434'),
-            help="Local Ollama server URL"
-        )
-        
-        embedding_key = st.text_input(
-            "Embedding API Key",
-            value=st.session_state.get('embedding_key', ''),
-            type="password",
-            help="Optional: For remote embedding generation"
-        )
-        
-        st.markdown("### System Configuration")
-        
-        vector_db_path = st.text_input(
-            "Vector Database Path",
-            value=st.session_state.get('vector_db_path', './memory_db'),
-            help="Path to store the vector database"
-        )
-        
-        allow_unsafe = st.checkbox(
-            "Allow Unsafe Tools",
-            value=st.session_state.get('allow_unsafe', False),
-            help="Enable potentially dangerous tools (use with caution)"
-        )
-        
-        submitted = st.form_submit_button("Initialize System")
-        
-        if submitted:
-            # Store configuration in session state
-            st.session_state.openai_key = openai_key
-            st.session_state.ollama_url = ollama_url
-            st.session_state.embedding_key = embedding_key
-            st.session_state.vector_db_path = vector_db_path
-            st.session_state.allow_unsafe = allow_unsafe
-            
-            # Initialize system
-            with st.spinner("Initializing system..."):
-                success = asyncio.run(st.session_state.gui_manager.initialize_system())
-                
-                if success:
-                    st.success("✅ System initialized successfully!")
-                    st.rerun()
-                else:
-                    st.error("❌ Failed to initialize system. Please check your configuration.")
-
-
-def show_ingestion_page():
-    """Display the document ingestion page."""
-    st.markdown("## Document Ingestion")
-    
-    tab1, tab2 = st.tabs(["Single Document", "Directory"])
-    
-    with tab1:
-        st.markdown("### Upload Single Document")
-        
-        uploaded_file = st.file_uploader(
-            "Choose a file",
-            type=['pdf', 'docx', 'epub', 'txt', 'md'],
-            help="Supported formats: PDF, DOCX, EPUB, TXT, MD"
-        )
-        
-        if uploaded_file is not None:
-            if st.button("Ingest Document"):
-                with st.spinner("Ingesting document..."):
-                    try:
-                        # Save uploaded file temporarily
-                        temp_path = f"/tmp/{uploaded_file.name}"
-                        with open(temp_path, "wb") as f:
-                            f.write(uploaded_file.getbuffer())
-                        
-                        # Ingest document
-                        ingestor = DocumentIngestor()
-                        metadata, chunks = asyncio.run(ingestor.ingest_document(temp_path))
-                        
-                        # Store in memory
-                        chunk_ids = asyncio.run(
-                            st.session_state.gui_manager.memory_manager.store_document_chunks(
-                                metadata, chunks, "gui_user"
-                            )
-                        )
-                        
-                        st.success(f"✅ Ingested {uploaded_file.name}")
-                        st.info(f"Chunks: {len(chunks)}, Words: {sum(c.word_count for c in chunks)}")
-                        
-                        # Clean up temp file
-                        os.remove(temp_path)
-                        
-                    except Exception as e:
-                        st.error(f"❌ Failed to ingest document: {e}")
-    
-    with tab2:
-        st.markdown("### Ingest Directory")
-        
-        directory_path = st.text_input(
-            "Directory Path",
-            help="Path to directory containing documents"
-        )
-        
-        if st.button("Ingest Directory") and directory_path:
-            with st.spinner("Ingesting directory..."):
-                try:
-                    ingestor = DocumentIngestor()
-                    results = asyncio.run(ingestor.ingest_directory(directory_path))
-                    
-                    total_chunks = 0
-                    total_words = 0
-                    
-                    for metadata, chunks in results:
-                        chunk_ids = asyncio.run(
-                            st.session_state.gui_manager.memory_manager.store_document_chunks(
-                                metadata, chunks, "gui_user"
-                            )
-                        )
-                        total_chunks += len(chunks)
-                        total_words += sum(c.word_count for c in chunks)
-                    
-                    st.success(f"✅ Ingested {len(results)} documents")
-                    st.info(f"Total chunks: {total_chunks}, Total words: {total_words}")
-                    
-                except Exception as e:
-                    st.error(f"❌ Failed to ingest directory: {e}")
-
-
-def show_research_page():
-    """Display the research page."""
-    st.markdown("## Research Management")
-    
-    tab1, tab2 = st.tabs(["Start Research", "Research Status"])
-    
-    with tab1:
-        st.markdown("### Start New Research")
-        
-        with st.form("research_form"):
-            topic = st.text_input("Research Topic", help="What do you want to research?")
-            description = st.text_area("Description", help="Detailed description of the research")
-            keywords = st.text_input("Keywords", help="Comma-separated keywords")
-            priority = st.slider("Priority", 1, 10, 5, help="Research priority (1-10)")
-            
-            submitted = st.form_submit_button("Start Research")
-            
-            if submitted and topic:
-                with st.spinner("Starting research..."):
-                    try:
-                        topic_id = asyncio.run(
-                            st.session_state.gui_manager.research_agent.start_research(
-                                topic_title=topic,
-                                description=description or f"Research on {topic}",
-                                keywords=keywords.split(',') if keywords else [],
-                                priority=priority
-                            )
-                        )
-                        
-                        st.success(f"✅ Started research: {topic}")
-                        st.info(f"Topic ID: {topic_id}")
-                        
-                    except Exception as e:
-                        st.error(f"❌ Failed to start research: {e}")
-    
-    with tab2:
-        st.markdown("### Research Status")
-        
-        # Get active research topics
-        try:
-            topics = asyncio.run(st.session_state.gui_manager.research_agent.get_active_topics())
-            
-            if topics:
-                for topic in topics:
-                    with st.expander(f"{topic.title} ({topic.status})"):
-                        st.write(f"**Description:** {topic.description}")
-                        st.write(f"**Keywords:** {', '.join(topic.keywords)}")
-                        st.write(f"**Priority:** {topic.priority}")
-                        st.write(f"**Created:** {topic.created_at}")
-                        
-                        if topic.status == "completed":
-                            # Show research summary
-                            summary = asyncio.run(
-                                st.session_state.gui_manager.research_agent.get_research_summary(topic.topic_id)
-                            )
-                            if summary:
-                                st.write("**Summary:**")
-                                st.write(summary.overview)
-                                
-                                if summary.key_findings:
-                                    st.write("**Key Findings:**")
-                                    for finding in summary.key_findings:
-                                        st.write(f"- {finding}")
-            else:
-                st.info("No active research topics")
-                
-        except Exception as e:
-            st.error(f"❌ Failed to get research status: {e}")
-
-
-def show_book_management_page():
-    """Display the book management page."""
-    st.markdown("## Book Management")
-    
-    tab1, tab2, tab3 = st.tabs(["Create Book", "Book Status", "Export Book"])
-    
-    with tab1:
-        st.markdown("### Create New Book")
-        
-        with st.form("book_form"):
-            title = st.text_input("Book Title")
-            author = st.text_input("Author")
-            description = st.text_area("Description")
-            audience = st.selectbox("Target Audience", ["general", "academic", "technical", "beginner", "expert"])
-            word_count = st.number_input("Estimated Word Count", min_value=1000, value=50000, step=1000)
-            
-            submitted = st.form_submit_button("Create Book")
-            
-            if submitted and title and author:
-                with st.spinner("Creating book..."):
-                    try:
-                        book_id = asyncio.run(
-                            st.session_state.gui_manager.book_builder.create_book(
-                                title=title,
-                                author=author,
-                                description=description,
-                                target_audience=audience,
-                                estimated_word_count=word_count
-                            )
-                        )
-                        
-                        st.success(f"✅ Created book: {title}")
-                        st.info(f"Book ID: {book_id}")
-                        
-                    except Exception as e:
-                        st.error(f"❌ Failed to create book: {e}")
-    
-    with tab2:
-        st.markdown("### Book Status")
-        
-        # Get book status
-        try:
-            # This would need to be implemented to get all books
-            st.info("Book status monitoring will be implemented here")
-            
-        except Exception as e:
-            st.error(f"❌ Failed to get book status: {e}")
-    
-    with tab3:
-        st.markdown("### Export Book")
-        
-        book_id = st.text_input("Book ID", help="Enter the book ID to export")
-        export_format = st.selectbox("Export Format", ["markdown", "docx", "pdf"])
-        include_bibliography = st.checkbox("Include Bibliography", value=True)
-        
-        if st.button("Export Book") and book_id:
-            with st.spinner("Exporting book..."):
-                try:
-                    output_path = asyncio.run(
-                        st.session_state.gui_manager.book_builder.export_book(
-                            book_id=book_id,
-                            format=export_format,
-                            include_bibliography=include_bibliography
-                        )
-                    )
-                    
-                    st.success(f"✅ Book exported successfully!")
-                    st.info(f"Output: {output_path}")
-                    
-                except Exception as e:
-                    st.error(f"❌ Failed to export book: {e}")
-
-
-def show_tools_page():
-    """Display the tools page."""
-    st.markdown("## Tool Management")
-    
-    tab1, tab2 = st.tabs(["Available Tools", "Execute Tool"])
-    
-    with tab1:
-        st.markdown("### Available Tools")
-        
-        try:
-            tools = asyncio.run(st.session_state.gui_manager.tool_agent.get_available_tools())
-            
-            if tools:
-                for tool in tools:
-                    with st.expander(f"{tool.tool_name} ({tool.category})"):
-                        st.write(f"**Description:** {tool.description}")
-                        st.write(f"**Parameters:** {tool.parameters}")
-                        
-                        if tool.examples:
-                            st.write("**Examples:**")
-                            for example in tool.examples:
-                                st.write(f"- {example['description']}")
-                                st.code(f"Parameters: {example['parameters']}")
-            else:
-                st.info("No tools available")
-                
-        except Exception as e:
-            st.error(f"❌ Failed to get tools: {e}")
-    
-    with tab2:
-        st.markdown("### Execute Tool")
-        
-        tool_name = st.selectbox(
-            "Select Tool",
-            options=[tool.tool_name for tool in asyncio.run(st.session_state.gui_manager.tool_agent.get_available_tools())]
-        )
-        
-        if tool_name:
-            st.write(f"Executing: {tool_name}")
-            # Tool execution interface would be implemented here
-
-
-def show_status_page():
-    """Display the system status page."""
-    st.markdown("## System Status")
-    
-    if not st.session_state.gui_manager.system_initialized:
-        st.error("❌ System not initialized")
-        return
-    
-    # System overview
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        memory_stats = st.session_state.gui_manager.memory_manager.get_stats()
-        st.metric("Memory Chunks", memory_stats['total_chunks'])
-    
-    with col2:
-        agent_stats = st.session_state.gui_manager.agent_manager.get_stats()
-        st.metric("Total Agents", agent_stats['total_agents'])
-    
-    with col3:
-        tool_stats = st.session_state.gui_manager.tool_manager.get_execution_stats()
-        st.metric("Available Tools", tool_stats['available_tools'])
-    
-    with col4:
-        st.metric("Running Tasks", agent_stats['running_tasks'])
-    
-    # Detailed status
-    st.markdown("### Detailed Status")
-    
-    # Agent status
-    st.markdown("#### Agent Status")
-    agent_df = pd.DataFrame([
-        {"Agent": "Research", "Status": "Active", "Tasks": 0},
-        {"Agent": "Writer", "Status": "Active", "Tasks": 0},
-        {"Agent": "Editor", "Status": "Active", "Tasks": 0},
-        {"Agent": "Tool", "Status": "Active", "Tasks": 0}
-    ])
-    st.dataframe(agent_df, use_container_width=True)
-    
-    # Tool execution stats
-    st.markdown("#### Tool Execution Statistics")
-    try:
-        tool_stats = asyncio.run(st.session_state.gui_manager.tool_agent.get_execution_stats())
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric("Total Executions", tool_stats['total_executions'])
-            st.metric("Success Rate", f"{tool_stats['success_rate']:.1%}")
-        
-        with col2:
-            st.metric("Failed Executions", tool_stats['failed_executions'])
-            st.metric("Avg Execution Time", f"{tool_stats['average_execution_time']:.2f}s")
-        
-    except Exception as e:
-        st.error(f"❌ Failed to get tool stats: {e}")
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

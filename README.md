@@ -120,14 +120,18 @@ python run.py cli status
 ### Graphical User Interface
 
 ```bash
-# Start the web interface
+# Start the native Mac GUI
 python run.py gui
-
-# Or specify port and host
-python run.py gui --port 8502 --host 0.0.0.0
 ```
 
-Then open your browser to `http://localhost:8501` (or your specified port).
+This launches a native Mac application with a clean, Zed-inspired interface featuring:
+- Dark theme with modern design
+- Sidebar navigation
+- Document management
+- Research tools
+- Book creation and management
+- Tool execution interface
+- Real-time system status
 
 ### Python API
 
