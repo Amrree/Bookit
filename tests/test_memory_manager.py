@@ -4,7 +4,8 @@ Unit tests for the MemoryManager module.
 import pytest
 import asyncio
 from pathlib import Path
-from memory_manager import MemoryManager, MemoryChunk, MemoryTag
+from datetime import datetime
+from memory_manager import MemoryManager, MemoryEntry, RetrievalResult
 
 
 class TestMemoryManager:
@@ -19,10 +20,13 @@ class TestMemoryManager:
     @pytest.mark.asyncio
     async def test_store_chunk(self, memory_manager):
         """Test storing a memory chunk."""
-        chunk = MemoryChunk(
+        chunk = MemoryEntry(
+            source_id="test_source",
+            chunk_id="test_chunk_001",
+            original_filename="test.txt",
+            ingestion_timestamp=datetime.now(),
             content="Test content for memory storage",
-            metadata={"source": "test", "type": "document"},
-            chunk_id="test_chunk_001"
+            metadata={"source": "test", "type": "document"}
         )
         
         result = await memory_manager.store_chunk(chunk)
@@ -38,20 +42,29 @@ class TestMemoryManager:
         """Test retrieving chunks by query."""
         # Store multiple chunks
         chunks = [
-            MemoryChunk(
+            MemoryEntry(
+                source_id="test_source",
+                chunk_id="chunk_001",
+                original_filename="test.txt",
+                ingestion_timestamp=datetime.now(),
                 content="Machine learning algorithms",
-                metadata={"topic": "AI", "type": "concept"},
-                chunk_id="chunk_001"
+                metadata={"topic": "AI", "type": "concept"}
             ),
-            MemoryChunk(
+            MemoryEntry(
+                source_id="test_source",
+                chunk_id="chunk_002",
+                original_filename="test.txt",
+                ingestion_timestamp=datetime.now(),
                 content="Deep learning neural networks",
-                metadata={"topic": "AI", "type": "concept"},
-                chunk_id="chunk_002"
+                metadata={"topic": "AI", "type": "concept"}
             ),
-            MemoryChunk(
+            MemoryEntry(
+                source_id="test_source",
+                chunk_id="chunk_003",
+                original_filename="test.txt",
+                ingestion_timestamp=datetime.now(),
                 content="Data preprocessing techniques",
-                metadata={"topic": "Data Science", "type": "method"},
-                chunk_id="chunk_003"
+                metadata={"topic": "Data Science", "type": "method"}
             )
         ]
         
@@ -94,7 +107,7 @@ class TestMemoryManager:
     @pytest.mark.asyncio
     async def test_provenance_tracking(self, memory_manager):
         """Test provenance tracking for memory chunks."""
-        chunk = MemoryChunk(
+        chunk = MemoryEntry(
             content="Test content with provenance",
             metadata={
                 "source": "test_document.pdf",
@@ -118,7 +131,7 @@ class TestMemoryManager:
         """Test memory cleanup operations."""
         # Store test chunks
         for i in range(5):
-            chunk = MemoryChunk(
+            chunk = MemoryEntry(
                 content=f"Test content {i}",
                 metadata={"test": True, "index": i},
                 chunk_id=f"cleanup_test_{i}"
@@ -139,7 +152,7 @@ class TestMemoryManager:
         """Test memory statistics collection."""
         # Store some chunks
         for i in range(3):
-            chunk = MemoryChunk(
+            chunk = MemoryEntry(
                 content=f"Statistics test content {i}",
                 metadata={"test": True},
                 chunk_id=f"stats_test_{i}"
@@ -156,7 +169,7 @@ class TestMemoryManager:
     async def test_concurrent_operations(self, memory_manager):
         """Test concurrent memory operations."""
         async def store_chunk(index):
-            chunk = MemoryChunk(
+            chunk = MemoryEntry(
                 content=f"Concurrent test content {index}",
                 metadata={"concurrent": True, "index": index},
                 chunk_id=f"concurrent_test_{index}"
@@ -192,7 +205,7 @@ class TestMemoryManager:
         
         # Test storage performance
         start_time = time.time()
-        chunk = MemoryChunk(
+        chunk = MemoryEntry(
             content="Performance test content",
             metadata={"test": True},
             chunk_id="perf_test_001"
