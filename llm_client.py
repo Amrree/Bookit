@@ -241,8 +241,8 @@ class OllamaProvider(LLMProvider):
                     "total_tokens": data.get("prompt_eval_count", 0) + data.get("eval_count", 0)
                 },
                 metadata={
-                    "done": data.get("done", False),
-                    "context": data.get("context", [])
+                    "done": str(data.get("done", False)),
+                    "context": str(data.get("context", []))
                 }
             )
             

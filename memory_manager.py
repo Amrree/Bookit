@@ -217,12 +217,14 @@ class MemoryManager:
                     score = 1 - distance
                     
                     if score >= min_score:
+                        # Ensure all metadata values are strings for Pydantic validation
+                        string_metadata = {k: str(v) for k, v in metadata.items()}
                         result = RetrievalResult(
                             content=doc,
                             chunk_id=metadata.get("chunk_id", ""),
                             source_id=metadata.get("source_id", ""),
                             score=score,
-                            metadata=metadata
+                            metadata=string_metadata
                         )
                         retrieval_results.append(result)
             
@@ -330,10 +332,25 @@ class MemoryManager:
         try:
             embedding = await self._generate_embedding(content)
             
+            # Convert datetime objects and lists to strings for ChromaDB compatibility
+            metadata_dict = memory_entry.dict()
+            metadata_dict['ingestion_timestamp'] = metadata_dict['ingestion_timestamp'].isoformat()
+            metadata_dict['tags'] = ','.join(metadata_dict['tags']) if metadata_dict['tags'] else ''
+            
+            # Flatten nested metadata dictionary
+            flattened_metadata = {}
+            for key, value in metadata_dict.items():
+                if key == 'metadata' and isinstance(value, dict):
+                    # Flatten the nested metadata dict
+                    for nested_key, nested_value in value.items():
+                        flattened_metadata[f"meta_{nested_key}"] = str(nested_value)
+                else:
+                    flattened_metadata[key] = str(value) if not isinstance(value, (str, int, float, bool)) else value
+            
             self.collection.add(
                 ids=[note_id],
                 documents=[content],
-                metadatas=[memory_entry.dict()],
+                metadatas=[flattened_metadata],
                 embeddings=[embedding]
             )
             

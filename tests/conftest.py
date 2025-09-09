@@ -68,13 +68,9 @@ def tool_manager():
 
 
 @pytest.fixture
-def agent_manager(memory_manager, llm_client, tool_manager):
+def agent_manager():
     """Create an AgentManager instance for testing."""
-    manager = AgentManager(
-        memory_manager=memory_manager,
-        llm_client=llm_client,
-        tool_manager=tool_manager
-    )
+    manager = AgentManager(max_concurrent_tasks=5)
     # Note: In a real test, you'd need to handle async initialization
     yield manager
 
