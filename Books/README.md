@@ -1,20 +1,44 @@
-# Tarot for Witches - Complete Book Collection
+# Complete Tarot Book Collection
 
-## 📚 Book Overview
+## 📚 Book Collection Overview
 
-**Title:** Tarot for Witches  
+This collection contains comprehensive guides to tarot reading and magical practice, offering practical techniques, spiritual insights, and advanced applications for practitioners of all levels.
+
+## 📖 Available Books
+
+### 1. Tarot for Witches
 **Subtitle:** A Complete Guide to Tarot Reading and Witchcraft Integration  
 **Author:** AI Book Writer  
 **Generated:** September 11, 2025  
 
 This comprehensive guide bridges the ancient art of tarot reading with modern witchcraft practices, offering practical techniques, spiritual insights, and magical applications for witches of all levels.
 
-## 📖 Book Statistics
+### 2. Tarot and Magic
+**Subtitle:** The Complete Guide to Integrating Tarot with Magical Practice  
+**Author:** AI Book Writer  
+**Generated:** September 11, 2025  
 
-- **Total Word Count:** 32,454 words
-- **Total Characters:** 221,723 characters
+An in-depth exploration of how tarot cards serve as powerful magical tools, offering advanced techniques for spellwork, ritual magic, divination, and spiritual transformation through the integration of tarot with various magical traditions.
+
+## 📊 Collection Statistics
+
+### Tarot for Witches
+- **Word Count:** 32,454 words
+- **Characters:** 221,723 characters
 - **Chapters:** 30 comprehensive chapters
-- **Target Audience:** Witches, tarot enthusiasts, spiritual practitioners, and those interested in divination and magical practices
+- **Target Audience:** Witches, tarot enthusiasts, spiritual practitioners
+
+### Tarot and Magic
+- **Word Count:** 33,137 words
+- **Characters:** 237,762 characters
+- **Chapters:** 30 comprehensive chapters
+- **Target Audience:** Practicing magicians, tarot readers, occultists, spiritual practitioners
+
+### Total Collection
+- **Total Word Count:** 65,591 words
+- **Total Characters:** 459,485 characters
+- **Total Chapters:** 60 comprehensive chapters
+- **Books:** 2 complete guides
 
 ## 📑 Table of Contents
 
@@ -166,11 +190,20 @@ This comprehensive guide bridges the ancient art of tarot reading with modern wi
 ```
 Books/
 ├── README.md (this file)
-├── Tarot_for_Witches_tarot_witches_20250911_021447.md (main book)
-├── Tarot_for_Witches_tarot_witches_20250911_021447.html (web version)
-├── Tarot_for_Witches_tarot_witches_20250911_021447.txt (plain text)
-├── Tarot_for_Witches_tarot_witches_20250911_021447.json (structured data)
-└── Tarot_for_Witches_tarot_witches_20250911_021447_epub/ (e-book format)
+├── 
+├── Tarot for Witches/
+│   ├── Tarot_for_Witches_tarot_witches_20250911_021447.md (main book)
+│   ├── Tarot_for_Witches_tarot_witches_20250911_021447.html (web version)
+│   ├── Tarot_for_Witches_tarot_witches_20250911_021447.txt (plain text)
+│   ├── Tarot_for_Witches_tarot_witches_20250911_021447.json (structured data)
+│   └── Tarot_for_Witches_tarot_witches_20250911_021447_epub/ (e-book format)
+├── 
+└── Tarot and Magic/
+    ├── Tarot_and_Magic_tarot_magic_20250911_022136.md (main book)
+    ├── Tarot_and_Magic_tarot_magic_20250911_022136.html (web version)
+    ├── Tarot_and_Magic_tarot_magic_20250911_022136.txt (plain text)
+    ├── Tarot_and_Magic_tarot_magic_20250911_022136.json (structured data)
+    └── Tarot_and_Magic_tarot_magic_20250911_022136_epub/ (e-book format)
 ```
 
 ## 🚀 Getting Started
