@@ -27,6 +27,13 @@ An in-depth exploration of how tarot cards serve as powerful magical tools, offe
 
 An immersive journey through the 22 Major Arcana cards, taking readers on a transformative path of self-discovery, spiritual growth, and personal evolution. Each card is explored in depth as a stage of the soul's journey.
 
+### 4. Tarot for Writers and Storytellers
+**Subtitle:** A Comprehensive Creative Toolkit  
+**Author:** AI Book Writer  
+**Generated:** September 11, 2025  
+
+A comprehensive guide that shows writers and storytellers how to use tarot cards as powerful creative tools for character development, plot creation, world-building, overcoming writer's block, and enhancing storytelling skills. This book bridges the mystical art of tarot with the practical craft of writing.
+
 ## 📊 Collection Statistics
 
 ### Tarot for Witches
@@ -47,11 +54,17 @@ An immersive journey through the 22 Major Arcana cards, taking readers on a tran
 - **Chapters:** 24 comprehensive chapters
 - **Target Audience:** Tarot enthusiasts, spiritual seekers, those on a path of self-discovery
 
+### Tarot for Writers and Storytellers
+- **Word Count:** 32,589 words
+- **Characters:** 223,892 characters
+- **Chapters:** 30 comprehensive chapters
+- **Target Audience:** Writers, novelists, screenwriters, playwrights, storytellers, creative writing students
+
 ### Total Collection
-- **Total Word Count:** 87,787 words
-- **Total Characters:** 601,971 characters
-- **Total Chapters:** 84 comprehensive chapters
-- **Books:** 3 complete guides
+- **Total Word Count:** 120,376 words
+- **Total Characters:** 825,863 characters
+- **Total Chapters:** 114 comprehensive chapters
+- **Books:** 4 complete guides
 
 ## 📑 Table of Contents
 
@@ -220,14 +233,23 @@ Books/
 │   ├── Tarot_and_Magic_tarot_magic_20250911_022136.json (structured data)
 │   └── Tarot_and_Magic_tarot_magic_20250911_022136_epub/ (e-book format)
 ├── 
-└── 03_Tarot_Major_Arcana_Journey/
+├── 03_Tarot_Major_Arcana_Journey/
+│   ├── README.md (book documentation)
+│   ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.md (main book)
+│   ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.html (web version)
+│   ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.txt (plain text)
+│   ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.docx (Word format)
+│   ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.pdf (PDF format)
+│   └── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.json (structured data)
+├── 
+└── 04_Tarot_for_Writers_and_Storytellers/
     ├── README.md (book documentation)
-    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.md (main book)
-    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.html (web version)
-    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.txt (plain text)
-    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.docx (Word format)
-    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.pdf (PDF format)
-    └── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.json (structured data)
+    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.md (main book)
+    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.html (web version)
+    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.txt (plain text)
+    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.docx (Word format)
+    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.pdf (PDF format)
+    └── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.json (structured data)
 ```
 
 ## 🚀 Getting Started
