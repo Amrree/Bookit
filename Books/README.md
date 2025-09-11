@@ -48,6 +48,13 @@ An immersive, narrative exploration of tarot as a lifelong companion, following 
 
 An extended, continuous journey through the symbolic world of tarot, conceived as a pilgrimage where the reader walks with a guide through a transformative spiritual landscape. Each card, spread, and concept is woven naturally into the flow like sights encountered on a long journey. Significantly expanded to full-length book with comprehensive content.
 
+### 7. The Living Tarot
+**Subtitle:** Narrative, Symbol, and Transformation  
+**Author:** AI Book Writer  
+**Generated:** September 11, 2025  
+
+A full-length literary work that treats tarot as a living system of symbols, explored through sustained narrative and reflective prose. Interweaves mythology, psychology, personal story, and cultural context to create a continuous meditation on life, meaning, and transformation. Cards and spreads appear organically within the flow rather than as isolated instructions.
+
 ## 📊 Collection Statistics
 
 ### Tarot for Witches
@@ -86,11 +93,17 @@ An extended, continuous journey through the symbolic world of tarot, conceived a
 - **Chapters:** 20 comprehensive pilgrimage chapters
 - **Target Audience:** Spiritual seekers, tarot enthusiasts, those interested in symbolic wisdom, readers who prefer immersive narrative experiences
 
+### The Living Tarot
+- **Word Count:** 20,232 words
+- **Characters:** 118,578 characters
+- **Chapters:** 25 literary chapters
+- **Target Audience:** Readers seeking deep engagement with tarot symbolism, those interested in literary approaches to spiritual topics, contemplative readers
+
 ### Total Collection
-- **Total Word Count:** 149,297 words
-- **Total Characters:** 1,053,970 characters
-- **Total Chapters:** 146 comprehensive chapters
-- **Books:** 6 complete guides
+- **Total Word Count:** 169,529 words
+- **Total Characters:** 1,172,548 characters
+- **Total Chapters:** 171 comprehensive chapters
+- **Books:** 7 complete guides
 
 ## 📑 Table of Contents
 
@@ -286,20 +299,29 @@ Books/
 │   ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.pdf (PDF format)
 │   └── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.json (structured data)
 ├── 
-└── 06_The_Tarot_Companion/
+├── 06_The_Tarot_Companion/
+│   ├── README.md (book documentation)
+│   ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.md (main v2 book)
+│   ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.html (web version)
+│   ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.txt (plain text)
+│   ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354_simple.docx (Word format)
+│   ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354_simple.pdf (PDF format)
+│   ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.json (structured data)
+│   ├── The_Tarot_Companion_tarot_companion_20250911_024536.md (original v1 book)
+│   ├── The_Tarot_Companion_tarot_companion_20250911_024536.html (v1 web version)
+│   ├── The_Tarot_Companion_tarot_companion_20250911_024536.txt (v1 plain text)
+│   ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.docx (v1 Word format)
+│   ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.pdf (v1 PDF format)
+│   └── The_Tarot_Companion_tarot_companion_20250911_024536.json (v1 structured data)
+├── 
+└── 07_The_Living_Tarot/
     ├── README.md (book documentation)
-    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.md (main v2 book)
-    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.html (web version)
-    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.txt (plain text)
-    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354_simple.docx (Word format)
-    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354_simple.pdf (PDF format)
-    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.json (structured data)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536.md (original v1 book)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536.html (v1 web version)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536.txt (v1 plain text)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.docx (v1 Word format)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.pdf (v1 PDF format)
-    └── The_Tarot_Companion_tarot_companion_20250911_024536.json (v1 structured data)
+    ├── The_Living_Tarot_living_tarot_20250911_030241.md (main book)
+    ├── The_Living_Tarot_living_tarot_20250911_030241.html (web version)
+    ├── The_Living_Tarot_living_tarot_20250911_030241.txt (plain text)
+    ├── The_Living_Tarot_living_tarot_20250911_030241_simple.docx (Word format)
+    ├── The_Living_Tarot_living_tarot_20250911_030241_simple.pdf (PDF format)
+    └── The_Living_Tarot_living_tarot_20250911_030241.json (structured data)
 ```
 
 ## 🚀 Getting Started
