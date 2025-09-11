@@ -34,6 +34,13 @@ An immersive journey through the 22 Major Arcana cards, taking readers on a tran
 
 A comprehensive guide that shows writers and storytellers how to use tarot cards as powerful creative tools for character development, plot creation, world-building, overcoming writer's block, and enhancing storytelling skills. This book bridges the mystical art of tarot with the practical craft of writing.
 
+### 5. Tarot for a Lifetime
+**Subtitle:** How the Cards Grow with You  
+**Author:** AI Book Writer  
+**Generated:** September 11, 2025  
+
+An immersive, narrative exploration of tarot as a lifelong companion, following the reader through childhood curiosity, young adult discovery, midlife challenges, and later-life reflection. This book shows how tarot's meaning shifts and deepens as we change, creating a story of lifelong friendship with the cards.
+
 ## 📊 Collection Statistics
 
 ### Tarot for Witches
@@ -60,11 +67,17 @@ A comprehensive guide that shows writers and storytellers how to use tarot cards
 - **Chapters:** 30 comprehensive chapters
 - **Target Audience:** Writers, novelists, screenwriters, playwrights, storytellers, creative writing students
 
+### Tarot for a Lifetime
+- **Word Count:** 7,466 words
+- **Characters:** 44,899 characters
+- **Chapters:** 12 immersive narrative chapters
+- **Target Audience:** Anyone seeking a deeper, more personal relationship with tarot, those interested in tarot as a lifelong spiritual companion
+
 ### Total Collection
-- **Total Word Count:** 120,376 words
-- **Total Characters:** 825,863 characters
-- **Total Chapters:** 114 comprehensive chapters
-- **Books:** 4 complete guides
+- **Total Word Count:** 127,842 words
+- **Total Characters:** 870,762 characters
+- **Total Chapters:** 126 comprehensive chapters
+- **Books:** 5 complete guides
 
 ## 📑 Table of Contents
 
@@ -242,14 +255,23 @@ Books/
 │   ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.pdf (PDF format)
 │   └── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.json (structured data)
 ├── 
-└── 04_Tarot_for_Writers_and_Storytellers/
+├── 04_Tarot_for_Writers_and_Storytellers/
+│   ├── README.md (book documentation)
+│   ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.md (main book)
+│   ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.html (web version)
+│   ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.txt (plain text)
+│   ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.docx (Word format)
+│   ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.pdf (PDF format)
+│   └── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.json (structured data)
+├── 
+└── 05_Tarot_for_a_Lifetime/
     ├── README.md (book documentation)
-    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.md (main book)
-    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.html (web version)
-    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.txt (plain text)
-    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.docx (Word format)
-    ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.pdf (PDF format)
-    └── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.json (structured data)
+    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.md (main book)
+    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.html (web version)
+    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.txt (plain text)
+    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.docx (Word format)
+    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.pdf (PDF format)
+    └── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.json (structured data)
 ```
 
 ## 🚀 Getting Started
