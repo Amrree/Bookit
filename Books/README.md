@@ -41,6 +41,13 @@ A comprehensive guide that shows writers and storytellers how to use tarot cards
 
 An immersive, narrative exploration of tarot as a lifelong companion, following the reader through childhood curiosity, young adult discovery, midlife challenges, and later-life reflection. This book shows how tarot's meaning shifts and deepens as we change, creating a story of lifelong friendship with the cards.
 
+### 6. The Tarot Companion
+**Subtitle:** A Journey Through Symbol and Spirit  
+**Author:** AI Book Writer  
+**Generated:** September 11, 2025  
+
+An extended, continuous journey through the symbolic world of tarot, conceived as a pilgrimage where the reader walks with a guide through a transformative spiritual landscape. Each card, spread, and concept is woven naturally into the flow like sights encountered on a long journey.
+
 ## 📊 Collection Statistics
 
 ### Tarot for Witches
@@ -73,11 +80,17 @@ An immersive, narrative exploration of tarot as a lifelong companion, following 
 - **Chapters:** 12 immersive narrative chapters
 - **Target Audience:** Anyone seeking a deeper, more personal relationship with tarot, those interested in tarot as a lifelong spiritual companion
 
+### The Tarot Companion
+- **Word Count:** 7,859 words
+- **Characters:** 49,525 characters
+- **Chapters:** 15 immersive pilgrimage chapters
+- **Target Audience:** Spiritual seekers, tarot enthusiasts, those interested in symbolic wisdom, readers who prefer immersive narrative experiences
+
 ### Total Collection
-- **Total Word Count:** 127,842 words
-- **Total Characters:** 870,762 characters
-- **Total Chapters:** 126 comprehensive chapters
-- **Books:** 5 complete guides
+- **Total Word Count:** 135,701 words
+- **Total Characters:** 920,287 characters
+- **Total Chapters:** 141 comprehensive chapters
+- **Books:** 6 complete guides
 
 ## 📑 Table of Contents
 
@@ -264,14 +277,23 @@ Books/
 │   ├── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244_simple.pdf (PDF format)
 │   └── Tarot_for_Writers_and_Storytellers_writers_tarot_20250911_023244.json (structured data)
 ├── 
-└── 05_Tarot_for_a_Lifetime/
+├── 05_Tarot_for_a_Lifetime/
+│   ├── README.md (book documentation)
+│   ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.md (main book)
+│   ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.html (web version)
+│   ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.txt (plain text)
+│   ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.docx (Word format)
+│   ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.pdf (PDF format)
+│   └── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.json (structured data)
+├── 
+└── 06_The_Tarot_Companion/
     ├── README.md (book documentation)
-    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.md (main book)
-    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.html (web version)
-    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.txt (plain text)
-    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.docx (Word format)
-    ├── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126_simple.pdf (PDF format)
-    └── Tarot_for_a_Lifetime_lifetime_tarot_20250911_024126.json (structured data)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536.md (main book)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536.html (web version)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536.txt (plain text)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.docx (Word format)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.pdf (PDF format)
+    └── The_Tarot_Companion_tarot_companion_20250911_024536.json (structured data)
 ```
 
 ## 🚀 Getting Started
