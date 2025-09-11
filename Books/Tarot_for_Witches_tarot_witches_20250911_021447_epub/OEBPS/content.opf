@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="book-id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:title>Tarot for Witches</dc:title>
+        <dc:creator>AI Book Writer</dc:creator>
+        <dc:language>en</dc:language>
+        <dc:identifier id="book-id">tarot-witches-20250911</dc:identifier>
+        <dc:date>2025-09-11</dc:date>
+        <dc:description>A Complete Guide to Tarot Reading and Witchcraft Integration</dc:description>
+    </metadata>
+    <manifest>
+        <item id="content" href="content.html" media-type="application/xhtml+xml"/>
+        <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+    </manifest>
+    <spine toc="ncx">
+        <itemref idref="content"/>
+    </spine>
+</package>
