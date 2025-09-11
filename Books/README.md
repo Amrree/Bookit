@@ -41,12 +41,12 @@ A comprehensive guide that shows writers and storytellers how to use tarot cards
 
 An immersive, narrative exploration of tarot as a lifelong companion, following the reader through childhood curiosity, young adult discovery, midlife challenges, and later-life reflection. This book shows how tarot's meaning shifts and deepens as we change, creating a story of lifelong friendship with the cards.
 
-### 6. The Tarot Companion
+### 6. The Tarot Companion v2
 **Subtitle:** A Journey Through Symbol and Spirit  
 **Author:** AI Book Writer  
 **Generated:** September 11, 2025  
 
-An extended, continuous journey through the symbolic world of tarot, conceived as a pilgrimage where the reader walks with a guide through a transformative spiritual landscape. Each card, spread, and concept is woven naturally into the flow like sights encountered on a long journey.
+An extended, continuous journey through the symbolic world of tarot, conceived as a pilgrimage where the reader walks with a guide through a transformative spiritual landscape. Each card, spread, and concept is woven naturally into the flow like sights encountered on a long journey. Significantly expanded to full-length book with comprehensive content.
 
 ## 📊 Collection Statistics
 
@@ -80,16 +80,16 @@ An extended, continuous journey through the symbolic world of tarot, conceived a
 - **Chapters:** 12 immersive narrative chapters
 - **Target Audience:** Anyone seeking a deeper, more personal relationship with tarot, those interested in tarot as a lifelong spiritual companion
 
-### The Tarot Companion
-- **Word Count:** 7,859 words
-- **Characters:** 49,525 characters
-- **Chapters:** 15 immersive pilgrimage chapters
+### The Tarot Companion v2
+- **Word Count:** 21,455 words
+- **Characters:** 133,683 characters
+- **Chapters:** 20 comprehensive pilgrimage chapters
 - **Target Audience:** Spiritual seekers, tarot enthusiasts, those interested in symbolic wisdom, readers who prefer immersive narrative experiences
 
 ### Total Collection
-- **Total Word Count:** 135,701 words
-- **Total Characters:** 920,287 characters
-- **Total Chapters:** 141 comprehensive chapters
+- **Total Word Count:** 149,297 words
+- **Total Characters:** 1,053,970 characters
+- **Total Chapters:** 146 comprehensive chapters
 - **Books:** 6 complete guides
 
 ## 📑 Table of Contents
@@ -288,12 +288,18 @@ Books/
 ├── 
 └── 06_The_Tarot_Companion/
     ├── README.md (book documentation)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536.md (main book)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536.html (web version)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536.txt (plain text)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.docx (Word format)
-    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.pdf (PDF format)
-    └── The_Tarot_Companion_tarot_companion_20250911_024536.json (structured data)
+    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.md (main v2 book)
+    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.html (web version)
+    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.txt (plain text)
+    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354_simple.docx (Word format)
+    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354_simple.pdf (PDF format)
+    ├── The_Tarot_Companion_v2_tarot_companion_v2_20250911_025354.json (structured data)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536.md (original v1 book)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536.html (v1 web version)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536.txt (v1 plain text)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.docx (v1 Word format)
+    ├── The_Tarot_Companion_tarot_companion_20250911_024536_simple.pdf (v1 PDF format)
+    └── The_Tarot_Companion_tarot_companion_20250911_024536.json (v1 structured data)
 ```
 
 ## 🚀 Getting Started
