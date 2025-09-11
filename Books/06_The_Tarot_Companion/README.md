@@ -1,8 +1,8 @@
-# The Tarot Companion: A Journey Through Symbol and Spirit
+# The Tarot Companion v2: A Journey Through Symbol and Spirit
 
 ## 📚 Book Overview
 
-**Title:** The Tarot Companion  
+**Title:** The Tarot Companion v2  
 **Subtitle:** A Journey Through Symbol and Spirit  
 **Author:** AI Book Writer  
 **Generated:** September 11, 2025  
@@ -11,9 +11,9 @@ An extended, continuous journey through the symbolic world of tarot, conceived a
 
 ## 📊 Book Statistics
 
-- **Word Count:** 7,859 words
-- **Character Count:** 49,525 characters
-- **Chapters:** 15 immersive pilgrimage chapters
+- **Word Count:** 21,455 words (v2 - significantly expanded)
+- **Character Count:** 133,683 characters
+- **Chapters:** 20 comprehensive pilgrimage chapters
 - **Target Audience:** Spiritual seekers, tarot enthusiasts, those interested in symbolic wisdom, readers who prefer immersive narrative experiences, and anyone on a journey of spiritual transformation
 
 ## 📑 Table of Contents
@@ -37,6 +37,11 @@ An extended, continuous journey through the symbolic world of tarot, conceived a
 13. The Minor Arcana: The Four Paths
 14. The Court Cards: The Four Families
 15. The Sacred Spreads: Rituals of Divination
+16. The Elemental Wisdom: Understanding the Suits
+17. The Numerical Journey: Ace to Ten
+18. The Seasonal Cycles: Tarot Through the Year
+19. The Lunar Phases: Moon Cards and Timing
+20. The Astrological Connections: Planets and Signs
 
 ### The Return
 - The Return: Carrying the Wisdom Home
