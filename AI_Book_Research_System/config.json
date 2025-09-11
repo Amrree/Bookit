@@ -1,0 +1,40 @@
+{
+    "system": {
+        "name": "AI Book Research System",
+        "version": "1.0.0",
+        "description": "Research/Write/Expand/Repeat cycle for book creation"
+    },
+    "apis": {
+        "openai": {
+            "enabled": false,
+            "api_key": "",
+            "model": "gpt-3.5-turbo",
+            "max_tokens": 4000
+        },
+        "ollama": {
+            "enabled": true,
+            "model": "llama2",
+            "base_url": "http://localhost:11434"
+        },
+        "web_search": {
+            "enabled": true,
+            "provider": "duckduckgo",
+            "max_results": 10
+        }
+    },
+    "research": {
+        "max_iterations": 5,
+        "min_sources": 3,
+        "quality_threshold": 0.8
+    },
+    "writing": {
+        "target_words_per_chapter": 3000,
+        "expansion_ratio": 3.0,
+        "literary_style": "contemplative"
+    },
+    "expansion": {
+        "target_expansion_ratio": 4.0,
+        "research_depth": "comprehensive",
+        "perspectives": ["historical", "psychological", "cultural", "practical"]
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "project": {
+        "name": "Mystical_Philosophy",
+        "created": "2025-09-11T06:31:47+00:00",
+        "status": "created",
+        "current_phase": "research"
+    },
+    "book": {
+        "title": "",
+        "subtitle": "",
+        "author": "AI Research System",
+        "target_chapters": 20,
+        "target_words_per_chapter": 3000,
+        "total_target_words": 60000,
+        "theme": "",
+        "audience": "",
+        "style": "literary"
+    },
+    "research": {
+        "topics": [],
+        "sources": [],
+        "iterations": 0,
+        "last_research": null
+    },
+    "writing": {
+        "chapters": [],
+        "total_words": 0,
+        "last_writing": null
+    },
+    "expansion": {
+        "expanded_chapters": [],
+        "expansion_ratio": 0,
+        "last_expansion": null
+    }
+}
