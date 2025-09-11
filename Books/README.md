@@ -20,6 +20,13 @@ This comprehensive guide bridges the ancient art of tarot reading with modern wi
 
 An in-depth exploration of how tarot cards serve as powerful magical tools, offering advanced techniques for spellwork, ritual magic, divination, and spiritual transformation through the integration of tarot with various magical traditions.
 
+### 3. Tarot: A Walk Through the Major Arcana
+**Subtitle:** A Transformative Journey from The Fool to The World  
+**Author:** AI Book Writer  
+**Generated:** September 11, 2025  
+
+An immersive journey through the 22 Major Arcana cards, taking readers on a transformative path of self-discovery, spiritual growth, and personal evolution. Each card is explored in depth as a stage of the soul's journey.
+
 ## 📊 Collection Statistics
 
 ### Tarot for Witches
@@ -34,11 +41,17 @@ An in-depth exploration of how tarot cards serve as powerful magical tools, offe
 - **Chapters:** 30 comprehensive chapters
 - **Target Audience:** Practicing magicians, tarot readers, occultists, spiritual practitioners
 
+### Tarot: A Walk Through the Major Arcana
+- **Word Count:** 22,196 words
+- **Characters:** 142,486 characters
+- **Chapters:** 24 comprehensive chapters
+- **Target Audience:** Tarot enthusiasts, spiritual seekers, those on a path of self-discovery
+
 ### Total Collection
-- **Total Word Count:** 65,591 words
-- **Total Characters:** 459,485 characters
-- **Total Chapters:** 60 comprehensive chapters
-- **Books:** 2 complete guides
+- **Total Word Count:** 87,787 words
+- **Total Characters:** 601,971 characters
+- **Total Chapters:** 84 comprehensive chapters
+- **Books:** 3 complete guides
 
 ## 📑 Table of Contents
 
@@ -191,19 +204,30 @@ An in-depth exploration of how tarot cards serve as powerful magical tools, offe
 Books/
 ├── README.md (this file)
 ├── 
-├── Tarot for Witches/
+├── 01_Tarot_for_Witches/
+│   ├── README.md (book documentation)
 │   ├── Tarot_for_Witches_tarot_witches_20250911_021447.md (main book)
 │   ├── Tarot_for_Witches_tarot_witches_20250911_021447.html (web version)
 │   ├── Tarot_for_Witches_tarot_witches_20250911_021447.txt (plain text)
 │   ├── Tarot_for_Witches_tarot_witches_20250911_021447.json (structured data)
 │   └── Tarot_for_Witches_tarot_witches_20250911_021447_epub/ (e-book format)
 ├── 
-└── Tarot and Magic/
-    ├── Tarot_and_Magic_tarot_magic_20250911_022136.md (main book)
-    ├── Tarot_and_Magic_tarot_magic_20250911_022136.html (web version)
-    ├── Tarot_and_Magic_tarot_magic_20250911_022136.txt (plain text)
-    ├── Tarot_and_Magic_tarot_magic_20250911_022136.json (structured data)
-    └── Tarot_and_Magic_tarot_magic_20250911_022136_epub/ (e-book format)
+├── 02_Tarot_and_Magic/
+│   ├── README.md (book documentation)
+│   ├── Tarot_and_Magic_tarot_magic_20250911_022136.md (main book)
+│   ├── Tarot_and_Magic_tarot_magic_20250911_022136.html (web version)
+│   ├── Tarot_and_Magic_tarot_magic_20250911_022136.txt (plain text)
+│   ├── Tarot_and_Magic_tarot_magic_20250911_022136.json (structured data)
+│   └── Tarot_and_Magic_tarot_magic_20250911_022136_epub/ (e-book format)
+├── 
+└── 03_Tarot_Major_Arcana_Journey/
+    ├── README.md (book documentation)
+    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.md (main book)
+    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.html (web version)
+    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.txt (plain text)
+    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.docx (Word format)
+    ├── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636_simple.pdf (PDF format)
+    └── Tarot_Major_Arcana_Journey_major_arcana_20250911_022636.json (structured data)
 ```
 
 ## 🚀 Getting Started
